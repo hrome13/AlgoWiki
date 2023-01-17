@@ -14,17 +14,17 @@ def no_tradeoff_necessary(family_name, variation):
 
     Prints this list as well.
     """
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     algorithms = algorithms.loc[algorithms['Variation'] == variation]
+    algorithms = algorithms[algorithms['Space Complexity Class'].str.contains(':')].sort_values('Year')
     
     if algorithms.empty:
-        print('No data found for family name: ' +
-              family_name + ' and variation: ' + variation)
-        return False
+        # print('No data found for family name: ' +
+        #       family_name + ' and variation: ' + variation)
+        return "No data"
 
-    algorithms = algorithms[algorithms['Space Complexity Class'].str.contains(':')].sort_values('Year')
 
     best_time = 8
     best_time_algs = []
@@ -44,8 +44,8 @@ def no_tradeoff_necessary(family_name, variation):
         try:
             item['time'] = float(row['Time Complexity Class']) - 1 #math.ceil(float(row['Time Complexity Class']) - 1)
         except:
-            # print(family_name, variation, row['Algorithm Name'], row['Time Complexity Class'])
-            return
+            print(family_name, variation, row['Algorithm Name'], row['Time Complexity Class'])
+            return "Error in Time Complexity"
         item['name'] = row['Algorithm Name']
 
         algs.append(item['name'])
@@ -80,14 +80,19 @@ def fraction_of_optimality():
     for family in families:
         variations = helpers.get_variations(family)
         for variation in variations:
-            total += 1
+            # total += 1
             optimal_algs = no_tradeoff_necessary(family, variation)
-            if optimal_algs:
-                has_optimal += 1
+            if type(optimal_algs) != str:
+                total += 1
+                if len(optimal_algs) > 0:
+                    has_optimal += 1
+                    # print(family, variation, optimal_algs)
+                else:
+                    print(family, variation)
     return (total, has_optimal, has_optimal/total)
 
 def space_improvements_by_year(family_name, variation):
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     if variation != "by family":
@@ -128,7 +133,7 @@ def space_improvements_by_year(family_name, variation):
     return improvements
 
 def time_improvements_by_year(family_name, variation):
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     if variation != "by family":
@@ -162,7 +167,7 @@ def time_improvements_by_year(family_name, variation):
     return improvements
 
 def time_improvements_by_type(family_name, variation):
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     if variation != "by family":
@@ -196,7 +201,7 @@ def time_improvements_by_type(family_name, variation):
     return improvements
 
 def space_improvements_by_type(family_name, variation):
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     if variation != "by family":
@@ -245,7 +250,7 @@ def plot_improvement_histograms(number_or_year, time_or_space, by_family_or_vari
 
     fams = helpers.get_families()
     improvements = []
-    save_dest = 'Plots/Histograms/'
+    save_dest = 'Analysis/Plots/Histograms/'
     plot_title = ' Improvements '
     for fam in fams:
         if by_family_or_variation == "variation":
@@ -269,16 +274,24 @@ def plot_improvement_histograms(number_or_year, time_or_space, by_family_or_vari
     if number_or_year == "Year":
         plot_title = 'Decades ' + time_or_space + plot_title + '(by ' + by_family_or_variation + ').png'
         sns.histplot(improvements, bins=range(1940, 2030, 10))
+        plt.ylabel(f"Number of {time_or_space} Improvements")
+        plt.xlabel("Year")
+        plt.title(f"Number of {time_or_space} Improvements per Decade (by {by_family_or_variation})")
     elif number_or_year == "Number":
-        sns.histplot(improvements, bins=range(0,max(improvements) + 1,1))
+        sns.histplot(improvements, bins=range(0,max(improvements) + 1,1), discrete=True)
         plot_title = 'Number of ' + time_or_space + plot_title + '(by ' + by_family_or_variation + ').png'
+        plt.ylabel(f"Number of Problems")
+        plt.xlabel(f"Number of {time_or_space} Improvements")
+        plt.title(f"Number of Problems With a Given Number\nof {time_or_space} Improvements (by {by_family_or_variation})")
+        xint = range(0, math.ceil(max(improvements))+1)
+        plt.xticks(xint)
     plt.savefig(save_dest + plot_title, dpi=300, bbox_inches='tight')
     plt.clf()
     return
 
 
 def plot_improvements_by_type(time_or_space, by_family_or_variation):
-    save_dest = 'Plots/Heatmaps/'
+    save_dest = 'Analysis/Plots/Heatmaps/'
 
     fams = helpers.get_families()
     df = pd.DataFrame(columns=['Pre-Improvement', 'Post-Improvement'])
@@ -341,7 +354,7 @@ def plot_improvements_by_type(time_or_space, by_family_or_variation):
 
 
 def plot_size_of_improvements(by_family_or_variation):
-    save_dest = 'Plots/Heatmaps/'
+    save_dest = 'Analysis/Plots/Heatmaps/'
 
     fams = helpers.get_families()
     space_df = pd.DataFrame(columns=['Pre-Improvement', 'Post-Improvement'])
@@ -373,7 +386,7 @@ def plot_size_of_improvements(by_family_or_variation):
     # print(tabulate(df2))
 
 
-    ax = sns.heatmap(df2, annot=True, cmap='Greens', linewidth=0.3, vmin=0, linecolor='gray')
+    ax = sns.heatmap(df2, annot=True, cmap='Greens', linewidth=0.3, vmin=0, linecolor='gray', fmt='.3g')
     plt.ylabel("Improvement Size (number of classes)")
     plt.box(on=None)
     plt.tick_params(axis='x', colors='#A6A6A6')
@@ -395,10 +408,11 @@ def plot_size_of_improvements(by_family_or_variation):
     return
 
 
-def plot_2x2_time_space_improvements(by_family_or_variation):
-    save_dest = "Plots/Heatmaps/"
+def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_variation, include_first_algo):
+    _not = "Not " if not include_first_algo else ""
+    save_dest = f"Analysis/Plots/Heatmaps/Proportions {_not}Including Firsts/"
 
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     families = helpers.get_families()
     improves_space = []
@@ -408,11 +422,14 @@ def plot_2x2_time_space_improvements(by_family_or_variation):
     count = 0
 
 
-    def get_array_of_improvements(algorithms, improves_space, improves_time, improves_both, no_improve, count):
+    def get_array_of_improvements(algorithms, improves_space, improves_time, improves_both, no_improve, count, include_first_algo):
         algorithms = algorithms[algorithms['Space Complexity Class'].str.contains(':')].sort_values('Year')
 
         best_time = 8
         best_space = 8
+        first_algo = not include_first_algo
+        improved_space = False
+        improved_time = False
 
         for index, row in algorithms.iterrows():
             item = {}
@@ -430,20 +447,62 @@ def plot_2x2_time_space_improvements(by_family_or_variation):
                 return count
             item['name'] = row['Algorithm Name']
 
-            count += 1
+            if by_problem_or_algorithm == "Algorithm":
+                if first_algo:
+                    first_algo = False
+                    if item['space'] < best_space and item['time'] < best_time:
+                        best_space = item['space']
+                        best_time = item['time']
+                    elif item['space'] < best_space:
+                        best_space = item['space']
+                    elif item['time'] < best_time:
+                        best_time = item['time']
+                else:
+                    count += 1
+                    if item['space'] < best_space and item['time'] < best_time:
+                        best_space = item['space']
+                        best_time = item['time']
+                        improves_both.append(item['name'])
+                    elif item['space'] < best_space:
+                        best_space = item['space']
+                        improves_space.append(item['name'])
+                    elif item['time'] < best_time:
+                        best_time = item['time']
+                        improves_time.append(item['name'])
+                    else:
+                        no_improve.append(item['name'])
+            elif by_problem_or_algorithm == "Problem":
+                if first_algo:
+                    first_algo = False
+                    if item['space'] < best_space and item['time'] < best_time:
+                        best_space = item['space']
+                        best_time = item['time']
+                    elif item['space'] < best_space:
+                        best_space = item['space']
+                    elif item['time'] < best_time:
+                        best_time = item['time']
+                else:
+                    if item['space'] < best_space and item['time'] < best_time:
+                        improved_space = True
+                        improved_time = True
+                    elif item['space'] < best_space:
+                        improved_space = True
+                    elif item['time'] < best_time:
+                        improved_time = True
 
-            if item['space'] < best_space and item['time'] < best_time:
-                best_space = item['space']
-                best_time = item['time']
-                improves_both.append(item['name'])
-            elif item['space'] < best_space:
-                best_space = item['space']
-                improves_space.append(item['name'])
-            elif item['time'] < best_time:
-                best_time = item['time']
-                improves_time.append(item['name'])
+                    if improved_time and improved_space:
+                        break
+
+        if by_problem_or_algorithm == "Problem":
+            count += 1
+            if improved_time and improved_space:
+                improves_both.append(1)
+            elif improved_time:
+                improves_time.append(1)
+            elif improved_space:
+                improves_space.append(1)
             else:
-                no_improve.append(item['name'])
+                no_improve.append(1)
 
         return count
 
@@ -459,15 +518,15 @@ def plot_2x2_time_space_improvements(by_family_or_variation):
                     print('No data found for family name: ' +
                         family_name + ' and variation: ' + variation)
                     continue
-                count = get_array_of_improvements(var_algorithms, improves_space, improves_time, improves_both, no_improve, count)
+                count = get_array_of_improvements(var_algorithms, improves_space, improves_time, improves_both, no_improve, count, include_first_algo)
         else:
             if algorithms.empty:
                 print('No data found for family name: ' +
                     family_name)
                 continue
-            count = get_array_of_improvements(algorithms, improves_space, improves_time, improves_both, no_improve, count)
+            count = get_array_of_improvements(algorithms, improves_space, improves_time, improves_both, no_improve, count, include_first_algo)
 
-    print(f"Number of algorithms used: {count}\n")
+    print(f"Number of {by_problem_or_algorithm}s used: {count}\n")
     graph_df = pd.DataFrame({"Doesn't Improve": [len(no_improve)/count, len(improves_time)/count], "Improves": [len(improves_space)/count, len(improves_both)/count]},
     index=["Doesn't Improve", "Improves"])
 
@@ -479,13 +538,12 @@ def plot_2x2_time_space_improvements(by_family_or_variation):
     plt.tick_params(axis='x', colors='#A6A6A6')
     plt.tick_params(axis='y', colors='#A6A6A6', rotation=0)
     ax.xaxis.tick_top()
-    ax.xaxis.set_label_position('top') 
+    ax.xaxis.set_label_position('top')
 
-    title = "Proportion of Algorithms that Improve (by " + by_family_or_variation +")"
+    title = f"Proportion of {by_problem_or_algorithm}s that Improve (by {by_family_or_variation})"
     plt.title(title)
 
     plt.tight_layout()
-    # plt.show()
 
     try:
         plt.savefig(save_dest + title + ".png", dpi=300, bbox_inches='tight')
@@ -496,6 +554,15 @@ def plot_2x2_time_space_improvements(by_family_or_variation):
     plt.clf()
     return
 
+def number_with_best_space_worse_than(exclusive_lower_bound_num):
+    """
+    0: Constant
+    1: Log n
+    2: Linear
+    ...
+    """
+    
+
 
 helpers.clean_data()
 # family = 'Maximum Subarray Problem'
@@ -504,7 +571,7 @@ helpers.clean_data()
 # variation = 'Non-Comparison Sorting'
 # no_tradeoff_necessary(family, variation)
 
-print(fraction_of_optimality())
+# print(fraction_of_optimality())
 
 # plot_improvement_histograms("Number", "Time", "Family")
 # plot_improvement_histograms("Number", "Time", "Variation")
@@ -523,5 +590,11 @@ print(fraction_of_optimality())
 # plot_size_of_improvements("Family")
 # plot_size_of_improvements("Variation")
 
-# plot_2x2_time_space_improvements("Family")
-# plot_2x2_time_space_improvements("Variation")
+# plot_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
+# plot_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
+# plot_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
+# plot_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
+# plot_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=False)
+# plot_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=False)
+# plot_2x2_time_space_improvements("Problem", "Family", include_first_algo=False)
+# plot_2x2_time_space_improvements("Problem", "Variation", include_first_algo=False)

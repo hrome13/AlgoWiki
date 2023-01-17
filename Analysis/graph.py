@@ -13,7 +13,7 @@ def generate_graph(family_name, variation, type):
     """
     type: one of ['time', 'space', 'both_time_improvements', 'both_tradeoffs', 'pareto_decades']
     """
-    dataframe = pd.read_csv('data.csv')
+    dataframe = pd.read_csv('Analysis/data.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     algorithms = algorithms.loc[algorithms['Variation'] == variation]
@@ -104,7 +104,7 @@ def generate_graph(family_name, variation, type):
         #                  len(upper_time), step="post", color="#FFFAEB")
         # title_suffix = 'Time'
 
-        save_dest = 'Plots/Time Improvements/'
+        save_dest = 'Analysis/Plots/Time Improvements/'
 
         # Get the algorithms that improve the time bounds
         improvements = []
@@ -155,7 +155,7 @@ def generate_graph(family_name, variation, type):
 
     # Create space bound improvement step plots
     elif type == 'space':
-        save_dest = 'Plots/Space Improvements/'
+        save_dest = 'Analysis/Plots/Space Improvements/'
 
         # Get the algorithms that improve the space bounds
         improvements = []
@@ -220,7 +220,7 @@ def generate_graph(family_name, variation, type):
                     linewidth=5, solid_capstyle='round', alpha=0.5, label='Space')
         plt.plot(upper_x[1:-1], upper_space[1:-1], 'o', color='#C71F1D', markersize=14)
 
-        plt.legend()
+        plt.legend(prop={'size': 24})
         title_suffix = 'Time with Space'
 
     # Create scatterplot showing space vs time for all of the algos
@@ -251,7 +251,7 @@ def generate_graph(family_name, variation, type):
                     item['space'] = math.ceil(float(dependency_list[1]) - 1) # math.ceil(float(dependency_list[1]) - 1)
             item['space'] = item.get('space', 0)
             item['name'] = row['Algorithm Name']
-            item['time'] = math.ceil(row['Time Complexity Class'] - 1)
+            item['time'] = math.ceil(float(row['Time Complexity Class']) - 1)
 
             # See if this alg is in the current decade, else update the decade (and plot the previous decade's algs)
             if item['year'] < decade_start + 10:
@@ -314,26 +314,26 @@ def generate_graph(family_name, variation, type):
         # color = iter(cm.rainbow(np.linspace(0, 1, len(decades))))
         decades_list = [x for x in decades]
         decades_list.sort()
-        decades_plotted = 0
+        points_plotted = 0
         for decade in decades_list[::-1]:
             label = str(decade) + '\'s'
             spaces, times, names, years = decades[decade]
             if spaces and times:
                 # c = next(color)
                 # plt.step(spaces, times, label=label, where='post', linewidth=5, c=c)
-                decades_plotted += 1
+                points_plotted += len(names)
                 plt.plot(spaces, times, 'o', markersize=14, label=label)
                 for i in range(len(names)):
                     plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
-                                xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=10)
-        plt.legend()
-        plt.xlabel("Space Complexity")
-        plt.ylabel("Time Complexity")
-        if decades_plotted > 1:
-            save_dest = "Plots/Pareto Decades/Improvements/"
+                                xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=0)#10)
+        plt.legend(prop={'size': 24})
+        plt.xlabel("Space Complexity", fontsize=20)
+        plt.ylabel("Time Complexity", fontsize=20)
+        if points_plotted > 1:
+            save_dest = "Analysis/Plots/Pareto Decades/Improvements/"
         else:
-            save_dest = "Plots/Pareto Decades/No Improvements/"
-        # save_dest = "Plots/Pareto Decades/"
+            save_dest = "Analysis/Plots/Pareto Decades/No Improvements/"
+        # save_dest = "Analysis/Plots/Pareto Decades/"
         title_suffix = "Pareto Frontier"
 
 
