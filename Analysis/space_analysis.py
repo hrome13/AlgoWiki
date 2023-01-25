@@ -554,14 +554,103 @@ def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
     plt.clf()
     return
 
-def number_with_best_space_worse_than(exclusive_lower_bound_num):
+def number_with_best_space_worse_than(num_for_split, by_family_or_variation):
     """
     0: Constant
     1: Log n
     2: Linear
     ...
+
+    Args:
+        num_for_split: The number of complexity class that you want split at (e.g. sub___, ___, super___)
+
+    Returns:
+        List of two tuples:
+            Tuple of three ints (# problems sub___, # problems ___, # problems super___)
+            Tuple of the proportions of the above
     """
-    
+
+    dataframe = pd.read_csv('Analysis/data.csv')
+    dataframe = dataframe.replace(np.nan, '', regex=True)
+    families = helpers.get_families()
+    sub_space = 0
+    at_space = 0
+    super_space = 0
+    count = 0
+
+    def get_best_space(algorithms):
+        """Get the best space complexity from the input algorithms (e.g. from a family or variation)"""
+        best_space = 8
+        for index, row in algorithms.iterrows():
+            item = {}
+            item['year'] = int(row['Year'])
+            spaces = row['Space Complexity Class'].split(',\n')
+            for dependency in spaces:
+                dependency_list = dependency.split(': ')
+                if dependency_list[0] == 'n' or dependency_list[0] == 'V': # TODO: maybe add a column of "preferred parameter" in the data
+                    item['space'] = math.ceil(float(dependency_list[1]) - 1) # TODO: CEIL THIS (ROUND UP)
+            item['space'] = item.get('space', 0)
+            item['name'] = row['Algorithm Name']
+
+            if item['space'] < best_space:
+                best_space = item['space']
+
+        return best_space
+
+
+    for family_name in families:
+        vars = helpers.get_variations(family_name)
+        algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+        if by_family_or_variation == "Variation":   
+            for variation in vars:
+                var_algorithms = algorithms.loc[algorithms['Variation'] == variation]
+                if var_algorithms.empty:
+                    print('No data found for family name: ' +
+                        family_name + ' and variation: ' + variation)
+                    continue
+                best_space = get_best_space(var_algorithms)
+                count += 1
+                if best_space < num_for_split:
+                    sub_space += 1
+                elif best_space == num_for_split:
+                    at_space += 1
+                elif best_space > num_for_split:
+                    # print(family_name, ":", variation, f"({best_space})")
+                    super_space += 1
+        else:
+            if algorithms.empty:
+                print('No data found for family name: ' +
+                    family_name)
+                continue
+            best_space = get_best_space(algorithms)
+            count += 1
+            if best_space < num_for_split:
+                sub_space += 1
+            elif best_space == num_for_split:
+                at_space += 1
+            elif best_space > num_for_split:
+                super_space += 1
+
+    class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
+    print(f"Numbers of {by_family_or_variation}:")
+    print(f"Sub-{class_string[num_for_split]}: {sub_space}, ({sub_space / count})")
+    print(f"At-{class_string[num_for_split]}: {at_space}, ({at_space / count})")
+    print(f"Super-{class_string[num_for_split]}: {super_space}, ({super_space / count})\n")
+    if num_for_split == 0:
+        data = [at_space, super_space]
+        labels = [f"At-{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
+        explode = [0, 0]
+    else:
+        data = [sub_space, at_space, super_space]
+        labels = [f"Sub-{class_string[num_for_split]}", f"At-{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
+        explode = [0,0,0.1]
+    sns.set_palette("Reds", 3)
+    plt.figure(figsize=(18, 9))
+    plt.pie(data, labels=labels, autopct='%1.1f%%', explode=explode)
+    plt.title(f"Problems' Best Space Complexity Compared to {class_string[num_for_split]} Space")
+    save_dest = "Analysis/Plots/Best Space Algos/"
+    plt.savefig(f"{save_dest}{class_string[num_for_split]} Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
+    return [(sub_space, at_space, super_space), (sub_space / count, at_space / count, super_space / count)]
 
 
 helpers.clean_data()
@@ -598,3 +687,8 @@ helpers.clean_data()
 # plot_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=False)
 # plot_2x2_time_space_improvements("Problem", "Family", include_first_algo=False)
 # plot_2x2_time_space_improvements("Problem", "Variation", include_first_algo=False)
+
+number_with_best_space_worse_than(0, "Family")
+number_with_best_space_worse_than(0, "Variation")
+number_with_best_space_worse_than(2, "Family")
+number_with_best_space_worse_than(2, "Variation")
