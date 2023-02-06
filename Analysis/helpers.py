@@ -25,6 +25,8 @@ def clean_data():
     found = False
     while searching:
         for index, row in dataframe.iterrows():
+            if row['Looked at?'] == "0.001":
+                continue
             row['Space Complexity Class'] = str(row['Space Complexity Class']).replace('?', '')
             row['Time Complexity Class'] = str(row['Time Complexity Class']).replace('?', '')
             if '; ' in str(row['Variation']):

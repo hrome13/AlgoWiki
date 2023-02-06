@@ -14,9 +14,9 @@ def no_tradeoff_necessary(family_name, variation):
 
     Prints this list as well.
     """
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    algorithms = df.loc[df['Family Name'] == family_name]
     algorithms = algorithms.loc[algorithms['Variation'] == variation]
     algorithms = algorithms[algorithms['Space Complexity Class'].str.contains(':')].sort_values('Year')
     
@@ -92,9 +92,9 @@ def fraction_of_optimality():
     return (total, has_optimal, has_optimal/total)
 
 def space_improvements_by_year(family_name, variation):
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    algorithms = df.loc[df['Family Name'] == family_name]
     if variation != "by family":
         algorithms = algorithms.loc[algorithms['Variation'] == variation]
     
@@ -133,9 +133,9 @@ def space_improvements_by_year(family_name, variation):
     return improvements
 
 def time_improvements_by_year(family_name, variation):
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    algorithms = df.loc[df['Family Name'] == family_name]
     if variation != "by family":
         algorithms = algorithms.loc[algorithms['Variation'] == variation]
     
@@ -167,9 +167,9 @@ def time_improvements_by_year(family_name, variation):
     return improvements
 
 def time_improvements_by_type(family_name, variation):
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    algorithms = df.loc[df['Family Name'] == family_name]
     if variation != "by family":
         algorithms = algorithms.loc[algorithms['Variation'] == variation]
     
@@ -201,9 +201,9 @@ def time_improvements_by_type(family_name, variation):
     return improvements
 
 def space_improvements_by_type(family_name, variation):
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    algorithms = df.loc[df['Family Name'] == family_name]
     if variation != "by family":
         algorithms = algorithms.loc[algorithms['Variation'] == variation]
     
@@ -240,7 +240,7 @@ def space_improvements_by_type(family_name, variation):
 
     return improvements
 
-def plot_improvement_histograms(number_or_year, time_or_space, by_family_or_variation):
+def hist_improvements(number_or_year, time_or_space, by_family_or_variation):
     """
     number_or_year: "Number" or "Year"
     time_or_space: "Time" or "Space"
@@ -250,8 +250,7 @@ def plot_improvement_histograms(number_or_year, time_or_space, by_family_or_vari
 
     fams = helpers.get_families()
     improvements = []
-    save_dest = 'Analysis/Plots/Histograms/'
-    plot_title = ' Improvements '
+    save_dest = "Analysis/Plots/Histograms/"
     for fam in fams:
         if by_family_or_variation == "variation":
             vars = helpers.get_variations(fam)
@@ -269,28 +268,45 @@ def plot_improvement_histograms(number_or_year, time_or_space, by_family_or_vari
                 elif time_or_space == "Space":
                     improvements.extend(space_improvements_by_year(fam, var))
     
-    print(improvements)
-    print(len(improvements))
     if number_or_year == "Year":
-        plot_title = 'Decades ' + time_or_space + plot_title + '(by ' + by_family_or_variation + ').png'
-        sns.histplot(improvements, bins=range(1940, 2030, 10))
+        plot_title = f"Decades {time_or_space} Improvements (by {by_family_or_variation})"
+        bins = range(1940, 2030, 10)
+        sns.set_theme()
+        counts, bins, patches = plt.hist(improvements, bins=bins)
+
+        print(f"\n{plot_title}")
+        for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+            print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
+
         plt.ylabel(f"Number of {time_or_space} Improvements")
         plt.xlabel("Year")
         plt.title(f"Number of {time_or_space} Improvements per Decade (by {by_family_or_variation})")
+
     elif number_or_year == "Number":
-        sns.histplot(improvements, bins=range(0,max(improvements) + 1,1), discrete=True)
-        plot_title = 'Number of ' + time_or_space + plot_title + '(by ' + by_family_or_variation + ').png'
+        plot_title = f"Number of {time_or_space} Improvements (by {by_family_or_variation})"
+        bins = range(0,max(improvements) + 1,1)
+        labels, counts = np.unique(improvements, return_counts=True)
+        sns.set_theme()
+        ax = plt.bar(labels, counts, align='center')
+        plt.gca().set_xticks(labels)
+
+        print(f"\n{plot_title}")
+        for container in ax:
+            bar_x = int(container.get_x() + container.get_width() / 2)
+            bar_y = container.get_height()
+            print(f'{bar_x:3d}: {bar_y:4.0f}')
+            
         plt.ylabel(f"Number of Problems")
         plt.xlabel(f"Number of {time_or_space} Improvements")
         plt.title(f"Number of Problems With a Given Number\nof {time_or_space} Improvements (by {by_family_or_variation})")
         xint = range(0, math.ceil(max(improvements))+1)
         plt.xticks(xint)
-    plt.savefig(save_dest + plot_title, dpi=300, bbox_inches='tight')
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
     plt.clf()
+    plt.close("all")
     return
 
-
-def plot_improvements_by_type(time_or_space, by_family_or_variation):
+def heat_improvements_by_type(time_or_space, by_family_or_variation):
     save_dest = 'Analysis/Plots/Heatmaps/'
 
     fams = helpers.get_families()
@@ -310,7 +326,7 @@ def plot_improvements_by_type(time_or_space, by_family_or_variation):
             var_df = pd.DataFrame(improvements, columns=['Pre-Improvement', 'Post-Improvement'])
             df = pd.concat([df, var_df], ignore_index=True)
     
-    # Create dataframe cross tabulation for the heatmap
+    # Create df cross tabulation for the heatmap
     df2 = pd.crosstab(df['Pre-Improvement'], df['Post-Improvement'])
     for i in range(8):
         if i not in df2.index:
@@ -350,10 +366,10 @@ def plot_improvements_by_type(time_or_space, by_family_or_variation):
         print("Failed")
 
     plt.clf()
+    plt.close("all")
     return
 
-
-def plot_size_of_improvements(by_family_or_variation):
+def heat_size_of_improvements(by_family_or_variation):
     save_dest = 'Analysis/Plots/Heatmaps/'
 
     fams = helpers.get_families()
@@ -374,7 +390,7 @@ def plot_size_of_improvements(by_family_or_variation):
             time_var_df = pd.DataFrame(time_improvements, columns=['Pre-Improvement', 'Post-Improvement'])
             time_df = pd.concat([time_df, time_var_df], ignore_index=True)
     
-    # Create dataframe cross tabulation for the heatmap
+    # Create df cross tabulation for the heatmap
     space_df['Space Improvements'] = space_df['Pre-Improvement'] - space_df['Post-Improvement']
     time_df['Time Improvements'] = time_df['Pre-Improvement'] - time_df['Post-Improvement']
 
@@ -405,15 +421,15 @@ def plot_size_of_improvements(by_family_or_variation):
         print("Failed")
 
     plt.clf()
+    plt.close("all")
     return
 
-
-def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_variation, include_first_algo):
+def heat_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_variation, include_first_algo):
     _not = "Not " if not include_first_algo else ""
     save_dest = f"Analysis/Plots/Heatmaps/Proportions {_not}Including Firsts/"
 
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
     families = helpers.get_families()
     improves_space = []
     improves_time = []
@@ -510,7 +526,7 @@ def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
 
     for family_name in families:
         vars = helpers.get_variations(family_name)
-        algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+        algorithms = df.loc[df['Family Name'] == family_name]
         if by_family_or_variation == "Variation":   
             for variation in vars:
                 var_algorithms = algorithms.loc[algorithms['Variation'] == variation]
@@ -526,7 +542,7 @@ def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
                 continue
             count = get_array_of_improvements(algorithms, improves_space, improves_time, improves_both, no_improve, count, include_first_algo)
 
-    print(f"Number of {by_problem_or_algorithm}s used: {count}\n")
+    # print(f"Number of {by_problem_or_algorithm}s used: {count}\n")
     graph_df = pd.DataFrame({"Doesn't Improve": [len(no_improve)/count, len(improves_time)/count], "Improves": [len(improves_space)/count, len(improves_both)/count]},
     index=["Doesn't Improve", "Improves"])
 
@@ -552,9 +568,10 @@ def plot_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
         print("Failed")
 
     plt.clf()
+    plt.close("all")
     return
 
-def number_with_best_space_worse_than(num_for_split, by_family_or_variation):
+def pie_best_space(num_for_split, by_family_or_variation):
     """
     0: Constant
     1: Log n
@@ -570,8 +587,8 @@ def number_with_best_space_worse_than(num_for_split, by_family_or_variation):
             Tuple of the proportions of the above
     """
 
-    dataframe = pd.read_csv('Analysis/data.csv')
-    dataframe = dataframe.replace(np.nan, '', regex=True)
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
     families = helpers.get_families()
     sub_space = 0
     at_space = 0
@@ -600,7 +617,7 @@ def number_with_best_space_worse_than(num_for_split, by_family_or_variation):
 
     for family_name in families:
         vars = helpers.get_variations(family_name)
-        algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
+        algorithms = df.loc[df['Family Name'] == family_name]
         if by_family_or_variation == "Variation":   
             for variation in vars:
                 var_algorithms = algorithms.loc[algorithms['Variation'] == variation]
@@ -650,8 +667,129 @@ def number_with_best_space_worse_than(num_for_split, by_family_or_variation):
     plt.title(f"Problems' Best Space Complexity Compared to {class_string[num_for_split]} Space")
     save_dest = "Analysis/Plots/Best Space Algos/"
     plt.savefig(f"{save_dest}{class_string[num_for_split]} Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
+    plt.clf()
+    plt.close("all")
     return [(sub_space, at_space, super_space), (sub_space / count, at_space / count, super_space / count)]
 
+def hist_papers_per_decade():
+    """
+    Create a histogram showing the number of papers in our database per decade.
+
+    Note: "1940s" is actually "1940s and before"
+    """
+
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+
+    save_dest = "Analysis/Plots/Histograms/"
+    plot_title = "Number of Papers Per Decade"
+
+    df.loc[df["Year"] < 1940] = 1940
+    years = df[df["Derived Space Complexity?"].isin(["0", "1"])]["Year"]
+    bins = range(1940, 2030, 10)
+    sns.set_theme()
+    counts, bins, patches = plt.hist(years, bins=bins)
+
+    print(f"{plot_title}")
+    for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+        print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
+
+    plt.ylabel("Number of Papers")
+    plt.xlabel("Decade Published")
+    plt.title(plot_title)
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+    return
+
+def hist_space_analysis_per_decade():
+    """
+    Creates two histograms--one showing the number of papers in our database that actually analyzed space complexity per decade,
+    and one showing the number of papers that didn't analyze the space complexity (and we had to derive it ourselves) per decade.
+
+    Note: "1940s" is actually "1940s and before"
+    """
+
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+
+    save_dest = "Analysis/Plots/Histograms/"
+
+    # Papers With Space Complexity Analysis
+    plot_title = "Number of Papers Per Decade With Space Analysis"
+
+    df.loc[df["Year"] < 1940] = 1940
+    analyzed_years = df[df["Derived Space Complexity?"] == "0"]["Year"]
+    analyzed_years = analyzed_years.rename("With Space Analysis")
+
+    bins = range(1940, 2030, 10)
+    sns.set_theme()
+    counts, bins, patches = plt.hist(analyzed_years, bins=bins)
+
+    print(f"\n{plot_title}")
+    for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+        print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
+
+    plt.ylabel("Number of Papers")
+    plt.xlabel("Decade Published")
+    plt.title(plot_title)
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+
+    # Papers Without Space Complexity Analysis
+    plot_title = "Number of Papers Per Decade Without Space Analysis"
+
+    df.loc[df["Year"] < 1940] = 1940
+    not_analyzed_years = df[df["Derived Space Complexity?"] == "1"]["Year"]
+    not_analyzed_years = not_analyzed_years.rename("Without Space Analysis")
+    
+    bins = range(1940, 2030, 10)
+    sns.set_theme()
+    counts, bins, patches = plt.hist(not_analyzed_years, bins=bins)
+
+    print(f"\n{plot_title}")
+    for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+        print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
+
+    plt.ylabel("Number of Papers")
+    plt.xlabel("Decade Published")
+    plt.title(plot_title)
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+
+    # Putting the two side-by-side
+    plot_title = "Space Analysis Per Decade (Bars)"
+
+    plt.ylabel("Number of Papers")
+    plt.xlabel("Decade Published")
+    
+    bins = range(1940, 2030, 10)
+    sns.set_theme()
+    counts, bins, patches = plt.hist([analyzed_years, not_analyzed_years], bins=bins,
+                                    label=["With Space Analysis", "Without Space Analysis"],
+                                    histtype="bar")
+
+    with_space, without_space = counts
+    print(f"\n{plot_title} -- Papers With vs Without Space Analysis")
+    for with_bar, without_bar, b0, b1 in zip(with_space, without_space, bins[:-1], bins[1:]):
+        print(f'{b0:3d} - {b1:3d}: {with_bar:4.0f} {without_bar:4.0f}')
+
+    plt.title(plot_title)
+    plt.legend(loc="upper left")
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+    return
 
 helpers.clean_data()
 # family = 'Maximum Subarray Problem'
@@ -660,35 +798,50 @@ helpers.clean_data()
 # variation = 'Non-Comparison Sorting'
 # no_tradeoff_necessary(family, variation)
 
-# print(fraction_of_optimality())
+print(fraction_of_optimality())
 
-# plot_improvement_histograms("Number", "Time", "Family")
-# plot_improvement_histograms("Number", "Time", "Variation")
-# plot_improvement_histograms("Number", "Space", "Family")
-# plot_improvement_histograms("Number", "Space", "Variation")
-# plot_improvement_histograms("Year", "Time", "Family")
-# plot_improvement_histograms("Year", "Time", "Variation")
-# plot_improvement_histograms("Year", "Space", "Family")
-# plot_improvement_histograms("Year", "Space", "Variation")
+print("\n-----------------------------\n")
 
-# plot_improvements_by_type("Time", "Family")
-# plot_improvements_by_type("Time", "Variation")
-# plot_improvements_by_type("Space", "Family")
-# plot_improvements_by_type("Space", "Variation")
+hist_improvements("Number", "Time", "Family")
+hist_improvements("Number", "Time", "Variation")
+hist_improvements("Number", "Space", "Family")
+hist_improvements("Number", "Space", "Variation")
+hist_improvements("Year", "Time", "Family")
+hist_improvements("Year", "Time", "Variation")
+hist_improvements("Year", "Space", "Family")
+hist_improvements("Year", "Space", "Variation")
 
-# plot_size_of_improvements("Family")
-# plot_size_of_improvements("Variation")
+print("\n-----------------------------\n")
 
-# plot_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
-# plot_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
-# plot_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
-# plot_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
-# plot_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=False)
-# plot_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=False)
-# plot_2x2_time_space_improvements("Problem", "Family", include_first_algo=False)
-# plot_2x2_time_space_improvements("Problem", "Variation", include_first_algo=False)
+heat_improvements_by_type("Time", "Family")
+heat_improvements_by_type("Time", "Variation")
+heat_improvements_by_type("Space", "Family")
+heat_improvements_by_type("Space", "Variation")
 
-number_with_best_space_worse_than(0, "Family")
-number_with_best_space_worse_than(0, "Variation")
-number_with_best_space_worse_than(2, "Family")
-number_with_best_space_worse_than(2, "Variation")
+print("\n-----------------------------\n")
+
+heat_size_of_improvements("Family")
+heat_size_of_improvements("Variation")
+
+print("\n-----------------------------\n")
+
+heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
+heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
+heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
+heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
+# heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=False)
+# heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=False)
+# heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=False)
+# heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=False)
+
+print("\n-----------------------------\n")
+
+pie_best_space(0, "Family")
+pie_best_space(0, "Variation")
+pie_best_space(2, "Family")
+pie_best_space(2, "Variation")
+
+print("\n-----------------------------\n")
+
+hist_papers_per_decade()
+hist_space_analysis_per_decade()
