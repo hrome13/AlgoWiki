@@ -366,6 +366,8 @@ def generate_graph(family_name, variation, type):
     except Exception as e:
         print(e)
         print("Failed")
+    plt.clf()
+    plt.close("all")
 
 # family = 'Maximum Subarray Problem'
 # variation = '1D Maximum Subarray'
@@ -388,5 +390,7 @@ for fam in families:
     for var in helpers.get_variations(fam):
         try:
             generate_graph(fam, var, 'pareto_decades')
+            generate_graph(fam, var, 'space')
+            generate_graph(fam, var, 'time')
         except Exception as e:
             print(fam, var, e)

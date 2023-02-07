@@ -5,6 +5,7 @@ import numpy as np
 import helpers
 import seaborn as sns
 from tabulate import tabulate
+from scipy import stats
 
 def no_tradeoff_necessary(family_name, variation):
     """
@@ -595,6 +596,8 @@ def pie_best_space(num_for_split, by_family_or_variation):
     super_space = 0
     count = 0
 
+    class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
+
     def get_best_space(algorithms):
         """Get the best space complexity from the input algorithms (e.g. from a family or variation)"""
         best_space = 8
@@ -614,6 +617,10 @@ def pie_best_space(num_for_split, by_family_or_variation):
 
         return best_space
 
+    if by_family_or_variation == "Variation":
+        print(f"\nProblem variations with best-space that is super-{class_string[num_for_split]}")
+    else:
+        print(f"\nProblem families with best-space that is super-{class_string[num_for_split]}")
 
     for family_name in families:
         vars = helpers.get_variations(family_name)
@@ -632,7 +639,7 @@ def pie_best_space(num_for_split, by_family_or_variation):
                 elif best_space == num_for_split:
                     at_space += 1
                 elif best_space > num_for_split:
-                    # print(family_name, ":", variation, f"({best_space})")
+                    print(f"{family_name}: {variation} -- {class_string[best_space]}")
                     super_space += 1
         else:
             if algorithms.empty:
@@ -646,10 +653,10 @@ def pie_best_space(num_for_split, by_family_or_variation):
             elif best_space == num_for_split:
                 at_space += 1
             elif best_space > num_for_split:
+                print(f"{family_name} -- {class_string[best_space]}")
                 super_space += 1
-
-    class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
-    print(f"Numbers of {by_family_or_variation}:")
+                
+    print(f"\nNumbers of {by_family_or_variation}:")
     print(f"Sub-{class_string[num_for_split]}: {sub_space}, ({sub_space / count})")
     print(f"At-{class_string[num_for_split]}: {at_space}, ({at_space / count})")
     print(f"Super-{class_string[num_for_split]}: {super_space}, ({super_space / count})\n")
@@ -678,7 +685,7 @@ def hist_papers_per_decade():
     Note: "1940s" is actually "1940s and before"
     """
 
-    df = pd.read_csv('Analysis/data.csv')
+    df = pd.read_csv('Analysis/data_dirty.csv')
     df = df.replace(np.nan, '', regex=True)
 
     save_dest = "Analysis/Plots/Histograms/"
@@ -712,7 +719,7 @@ def hist_space_analysis_per_decade():
     Note: "1940s" is actually "1940s and before"
     """
 
-    df = pd.read_csv('Analysis/data.csv')
+    df = pd.read_csv('Analysis/data_dirty.csv')
     df = df.replace(np.nan, '', regex=True)
 
     save_dest = "Analysis/Plots/Histograms/"
@@ -791,6 +798,49 @@ def hist_space_analysis_per_decade():
     plt.close("all")
     return
 
+def hist_space_and_time_improvements_per_decade(by_family_or_variation):
+    by_family_or_variation = by_family_or_variation.lower()
+
+    fams = helpers.get_families()
+    space_improvements = []
+    time_improvements = []
+
+    for fam in fams:
+        if by_family_or_variation == "variation":
+            vars = helpers.get_variations(fam)
+        elif by_family_or_variation == "family":
+            vars = ["by family"]
+        for var in vars:
+            space_improvements.extend(space_improvements_by_year(fam, var))
+            time_improvements.extend(time_improvements_by_year(fam, var))
+
+    # Putting the two side-by-side
+    save_dest = "Analysis/Plots/Histograms/"
+    plot_title = "Improvements Per Decade (Bars)"
+    
+    bins = range(1940, 2030, 10)
+    sns.set_theme()
+    counts, bins, patches = plt.hist([time_improvements, space_improvements], bins=bins,
+                                    label=["Time Improvements", "Space Improvements"],
+                                    histtype="bar")
+
+    time, space = counts
+    print(f"\n{plot_title} -- Time improvements vs space improvements")
+    for time_bar, space_bar, b0, b1 in zip(time, space, bins[:-1], bins[1:]):
+        print(f'{b0:3d} - {b1:3d}: {time_bar:4.0f} {space_bar:4.0f}')
+
+    plt.ylabel("Number of Improvements")
+    plt.xlabel("Decade Published")
+    plt.title(plot_title)
+    plt.legend(loc="upper left")
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+    return
+
+
 helpers.clean_data()
 # family = 'Maximum Subarray Problem'
 # variation = '1D Maximum Subarray'
@@ -829,10 +879,6 @@ heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
 heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
 heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
 heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
-# heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=False)
-# heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=False)
-# heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=False)
-# heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=False)
 
 print("\n-----------------------------\n")
 
@@ -845,3 +891,4 @@ print("\n-----------------------------\n")
 
 hist_papers_per_decade()
 hist_space_analysis_per_decade()
+hist_space_and_time_improvements_per_decade("Variation")
