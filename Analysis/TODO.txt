@@ -1,0 +1,22 @@
+(DONE) 1. For ___ Improvements Heatmaps
+    - Flip the x-axis (worse on left)
+    - Move x-ticks to top
+
+2. Create new heatmap showing only the jumps from first algorithm to best algorithm
+
+3. For the Pareto graphs
+    - denote parallel/quantum algorithms differently
+    - Draw the frontier with a line
+
+4. Create a 100% histogram showing parcentage of problems with an optimal algorithm over time
+    - See ipad drawing (% with tradeoff, % with optimal)
+
+5. Make the Pareto examples pretty
+    - Clean up titles and years
+
+6. Pie charts
+    - Recreate the pie charts from Emily's paper but with space
+
+(DONE) 7. Make the Space Analysis Per Decade chart but with Percentages
+
+8. Histogram of the implied lower bound powers

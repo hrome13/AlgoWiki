@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import numpy as np
 import helpers
 import seaborn as sns
@@ -349,10 +350,12 @@ def heat_improvements_by_type(time_or_space, by_family_or_variation):
     plt.box(on=None)
     plt.tick_params(axis='x', colors='#A6A6A6')
     plt.tick_params(axis='y', colors='#A6A6A6')
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+    ax.xaxis.tick_top()
+    ax.xaxis.set_label_position('top') 
+    ax.invert_xaxis()
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="left",
          rotation_mode="anchor") # if you want x-axis label on top, change to ha="left"
-    # ax.xaxis.tick_top()
-    # ax.xaxis.set_label_position('top') 
+
 
     title = time_or_space + " Improvements Heatmap (by " + by_family_or_variation +")"
     plt.title(title)
@@ -711,32 +714,38 @@ def hist_papers_per_decade():
     plt.close("all")
     return
 
-def hist_space_analysis_per_decade():
+def hist_space_analysis_per_decade(absolute_or_percent):
     """
     Creates two histograms--one showing the number of papers in our database that actually analyzed space complexity per decade,
     and one showing the number of papers that didn't analyze the space complexity (and we had to derive it ourselves) per decade.
 
     Note: "1940s" is actually "1940s and before"
+
+    Args:
+        absolute_or_percent: string "Absolute" or "Percent"
     """
 
-    df = pd.read_csv('Analysis/data_dirty.csv')
-    df = df.replace(np.nan, '', regex=True)
 
     save_dest = "Analysis/Plots/Histograms/"
+
+    # Get the data first
+    df = pd.read_csv('Analysis/data_dirty.csv')
+    df = df.replace(np.nan, '', regex=True)
+    df.loc[df["Year"] < 1940] = 1940
+    not_analyzed_years = df[df["Derived Space Complexity?"] == "1"]["Year"]
+    not_analyzed_years = not_analyzed_years.rename("Without Space Analysis")
+    analyzed_years = df[df["Derived Space Complexity?"] == "0"]["Year"]
+    analyzed_years = analyzed_years.rename("With Space Analysis")
+    bins = range(1940, 2030, 10)
 
     # Papers With Space Complexity Analysis
     plot_title = "Number of Papers Per Decade With Space Analysis"
 
-    df.loc[df["Year"] < 1940] = 1940
-    analyzed_years = df[df["Derived Space Complexity?"] == "0"]["Year"]
-    analyzed_years = analyzed_years.rename("With Space Analysis")
-
-    bins = range(1940, 2030, 10)
     sns.set_theme()
-    counts, bins, patches = plt.hist(analyzed_years, bins=bins)
+    analyzed_counts, analyzed_bins, patches = plt.hist(analyzed_years, bins=bins)
 
     print(f"\n{plot_title}")
-    for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+    for bar, b0, b1 in zip(analyzed_counts, analyzed_bins[:-1], analyzed_bins[1:]):
         print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
 
     plt.ylabel("Number of Papers")
@@ -750,17 +759,12 @@ def hist_space_analysis_per_decade():
 
     # Papers Without Space Complexity Analysis
     plot_title = "Number of Papers Per Decade Without Space Analysis"
-
-    df.loc[df["Year"] < 1940] = 1940
-    not_analyzed_years = df[df["Derived Space Complexity?"] == "1"]["Year"]
-    not_analyzed_years = not_analyzed_years.rename("Without Space Analysis")
     
-    bins = range(1940, 2030, 10)
     sns.set_theme()
-    counts, bins, patches = plt.hist(not_analyzed_years, bins=bins)
+    not_analyzed_counts, not_analyzed_bins, patches = plt.hist(not_analyzed_years, bins=bins)
 
     print(f"\n{plot_title}")
-    for bar, b0, b1 in zip(counts, bins[:-1], bins[1:]):
+    for bar, b0, b1 in zip(not_analyzed_counts, not_analyzed_bins[:-1], not_analyzed_bins[1:]):
         print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
 
     plt.ylabel("Number of Papers")
@@ -773,29 +777,59 @@ def hist_space_analysis_per_decade():
     plt.close("all")
 
     # Putting the two side-by-side
-    plot_title = "Space Analysis Per Decade (Bars)"
-
-    plt.ylabel("Number of Papers")
-    plt.xlabel("Decade Published")
+    plot_title = "Space Analysis Per Decade"
+    if absolute_or_percent == "Absolute":
+        save_title = plot_title + " (Absolutes)"
+    elif absolute_or_percent == "Percent":
+        save_title = plot_title + " (Percents)"
     
-    bins = range(1940, 2030, 10)
+    # plt.xlabel("Decade Published", fontsize=6)
+    
     sns.set_theme()
-    counts, bins, patches = plt.hist([analyzed_years, not_analyzed_years], bins=bins,
-                                    label=["With Space Analysis", "Without Space Analysis"],
-                                    histtype="bar")
+    if absolute_or_percent == "Absolute":
+        plt.ylabel("Number of Papers", fontsize=8)
+        counts, bins, patches = plt.hist([analyzed_years, not_analyzed_years], bins=bins,
+                                        label=["With Space Analysis", "Without Space Analysis"],
+                                        histtype="bar")
 
-    with_space, without_space = counts
-    print(f"\n{plot_title} -- Papers With vs Without Space Analysis")
-    for with_bar, without_bar, b0, b1 in zip(with_space, without_space, bins[:-1], bins[1:]):
-        print(f'{b0:3d} - {b1:3d}: {with_bar:4.0f} {without_bar:4.0f}')
+        with_space, without_space = counts
+        print(f"\n{plot_title} -- Papers With vs Without Space Analysis")
+        for with_bar, without_bar, b0, b1 in zip(with_space, without_space, bins[:-1], bins[1:]):
+            print(f'{b0:3d} - {b1:3d}: {with_bar:4.0f} {without_bar:4.0f}')
+    elif absolute_or_percent == "Percent":
+        plt.ylabel("Percent of Papers", fontsize=8)
+        total_per_year = [with_ + without_ for (with_, without_) in zip(analyzed_counts, not_analyzed_counts)]
+        percent_with = [with_ / total for (with_, total) in zip(analyzed_counts, total_per_year)]
+        percent_without = [without_ / total for (without_, total) in zip(not_analyzed_counts, total_per_year)]
+        width = 2.25
+        labels = ["1940s and earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
+        plt.bar([i*3 for i in range(len(labels))], percent_with, width, label="With Space Analysis")
+        plt.bar([i*3 for i in range(len(labels))], percent_without, width, label="Without Space Analysis", bottom=percent_with)
+        for i in range(len(labels)):
+            plt.annotate("{:.1%}".format(percent_with[i]), (i * 3, percent_with[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+            plt.annotate("{:.1%}".format(percent_without[i]), (i * 3, percent_with[i] + percent_without[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+        plt.xticks([i*3 for i in range(len(labels))], labels)
+        plt.xticks(fontsize=6)
+        plt.yticks(fontsize=6)
+        plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0))
 
     plt.title(plot_title)
-    plt.legend(loc="upper left")
+    plt.legend(loc="upper right")
     plt.tight_layout()
 
-    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.savefig(save_dest + save_title + ".png", dpi=300, bbox_inches="tight")
     plt.clf()
     plt.close("all")
+
+    if absolute_or_percent == "Percent":
+        x = range(len(percent_with))
+        y = percent_with
+        res = stats.linregress(x, y)
+        plt.plot(x, y, 'o')
+        plt.plot(x, res.intercept + res.slope * x, 'r')
+        plt.xticks(range(len(percent_with)), labels)
+        print(f"\nThe percentage of papers with space analysis is increasing by {'{:.2f}'.format(res.slope * 100)} per decade\nwith an r-value of {'{:.4f}'.format(res.rvalue)} and a p-value of {'{:.4f}'.format(res.pvalue)} which is < 0.05,\nso we may reject the null hypothesis that the percentage doesn't change over time.\n")
+        # plt.show()
     return
 
 def hist_space_and_time_improvements_per_decade(by_family_or_variation):
@@ -842,53 +876,48 @@ def hist_space_and_time_improvements_per_decade(by_family_or_variation):
 
 
 helpers.clean_data()
-# family = 'Maximum Subarray Problem'
-# variation = '1D Maximum Subarray'
-# family = 'Sorting'
-# variation = 'Non-Comparison Sorting'
-# no_tradeoff_necessary(family, variation)
 
-print(fraction_of_optimality())
+# print(fraction_of_optimality())
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-hist_improvements("Number", "Time", "Family")
-hist_improvements("Number", "Time", "Variation")
-hist_improvements("Number", "Space", "Family")
-hist_improvements("Number", "Space", "Variation")
-hist_improvements("Year", "Time", "Family")
-hist_improvements("Year", "Time", "Variation")
-hist_improvements("Year", "Space", "Family")
-hist_improvements("Year", "Space", "Variation")
+# hist_improvements("Number", "Time", "Family")
+# hist_improvements("Number", "Time", "Variation")
+# hist_improvements("Number", "Space", "Family")
+# hist_improvements("Number", "Space", "Variation")
+# hist_improvements("Year", "Time", "Family")
+# hist_improvements("Year", "Time", "Variation")
+# hist_improvements("Year", "Space", "Family")
+# hist_improvements("Year", "Space", "Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_improvements_by_type("Time", "Family")
-heat_improvements_by_type("Time", "Variation")
-heat_improvements_by_type("Space", "Family")
-heat_improvements_by_type("Space", "Variation")
+# heat_improvements_by_type("Time", "Family")
+# heat_improvements_by_type("Time", "Variation")
+# heat_improvements_by_type("Space", "Family")
+# heat_improvements_by_type("Space", "Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_size_of_improvements("Family")
-heat_size_of_improvements("Variation")
+# heat_size_of_improvements("Family")
+# heat_size_of_improvements("Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
-heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
-heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
-heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
+# heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
+# heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
+# heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
+# heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-pie_best_space(0, "Family")
-pie_best_space(0, "Variation")
-pie_best_space(2, "Family")
-pie_best_space(2, "Variation")
+# pie_best_space(0, "Family")
+# pie_best_space(0, "Variation")
+# pie_best_space(2, "Family")
+# pie_best_space(2, "Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-hist_papers_per_decade()
-hist_space_analysis_per_decade()
-hist_space_and_time_improvements_per_decade("Variation")
+# hist_papers_per_decade()
+hist_space_analysis_per_decade("Percent")
+# hist_space_and_time_improvements_per_decade("Variation")
