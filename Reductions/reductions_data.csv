@@ -1,0 +1,437 @@
+Description,From (Problem),From (Variation),To (Problem),To (Variation),Reduction ID,Type,Calls,Time Complexity,Space Complexity,Model,Assumption/Hypothesis,Implications,Implied lower bound power,References,Link,Year,Preserves,Notes,,
+,Boolean Satisfiability,CNF-SAT,Orthogonal Vectors,k-OV,1,,,,,,SETH,"If: to-time: $N^{(k-\epsilon)} \poly(m)$ where $m$-dimensional vectors, $k$-OV, $N$ vectors per set
+Then: from-time: $2^{(n-\epsilon')} \poly(m)$ where $\epsilon' = \epsilon/k > 0$, $n$ variables, $m$ clauses",k,"Ryan Williams. A new algorithm for optimal 2-constraint satisfaction and its implications. Theor. Comput. Sci., 348(2-3):357–365, 2005.",,2005,,,,
+,Orthogonal Vectors,OV,Graph Metrics,Diameter 2 vs 3,2,,,,,,3-OV,"If: to-time: $O(N^{(2-\epsilon)})$ where $N = nd$ and $V,E = O(n)$
+Then: from-time: $O((nd)^{(2-\epsilon)}) \leq n^{(2-\epsilon)} \poly(d)$ where 2 sets of $n$ $d$-dimensional vectors",2,"L. Roditty and V. Vassilevska Williams. Fast approximation algorithms for the diameter and radius of sparse graphs. In STOC, pages 515–524, 2013.",https://people.csail.mit.edu/virgi/diam.pdf,2013,,I think this is the same as the generalization,,
+,Orthogonal Vectors,3-OV,Graph Metrics,Diameter 3 vs 7,3,,,,,,3-OV Hypothesis,"If: to-time: $O(N^{(3/2-\epsilon)}$ where $N=n^2 d^2$ and $\epsilon > 0$
+Then: from-time: $n^{3-2\epsilon}\poly(d)$",1.5,"Arturs Backurs, Liam Roditty, Gilad Segal, Virginia Vassilevska Williams, and Nicole Wein. Towards tight approximation bounds for graph diameter and eccentricities.",https://dl.acm.org/doi/pdf/10.1145/3188745.3188950,2018,,Theorem 3.3,,
+,Orthogonal Vectors,OV,String Similarity,Edit Distance,4,,,,,,SETH,"If: to-time: $O(n^{(2-\epsilon)})$ where $n$ is length of sequence
+Then: from-time: O(d^(O(1)*(N)^(2-\epsilon)) where 2 sets of n d-dimensional vectors",2,"Backurs, Arturs, and Piotr Indyk. ""Edit distance cannot be computed in strongly subquadratic time (unless SETH is false)."" Proceedings of the forty-seventh annual ACM symposium on Theory of computing. 2015.
+",https://arxiv.org/pdf/1412.0348.pdf,2014,,These 4 are from 6.S078 Lec 5,,
+,Boolean Satisfiability,CNF-SAT,Frechet Distance,Frechet Distance,5,,,,,,SETH,"If: to-time: $O(2^{(2-\epsilon)}$ for any $\epsilon > 0$
+Then: from-time: $O(2^{(1-\delta/2)N}$ where $N$ is s.t there are $n=\tilde{O}(2^{N/2})$ vertices on each curve",2,"Karl Bringmann, Why walking the dog takes time: Fréchet distance has no strongly subquadratic algorithms unless SETH fails",https://people.mpi-inf.mpg.de/~kbringma/paper/2014FOCS.pdf,2014,,,,
+,Orthogonal Vectors,UOV,Dynamic Time Warping (DTW),Dynamic Time Warping (DTW),6,,,,,,UOVH,"If: to-time: $O((nm)^{(1-\epsilon)})$, where $|x| = O(nd)$ and $|y| = O(md)$
+Then: from-time: $O((nm)^{(1-\epsilon/2)})$",2,,https://arxiv.org/pdf/1502.01063.pdf,2015,,,,
+,Orthogonal Vectors,UOV,Longest Common Subsequence,Longest Common Subsequence (LCS),7,,,,,,UOVH,"If: to-time: $O((nm)^{(1-\epsilon)})$, where $|x| = O(nd)$ and $|y| = O(md)$
+Then: from-time: $O((nm)^{(1-\epsilon/2)})$",2,,https://arxiv.org/pdf/1502.01063.pdf,2015,,,,
+,Orthogonal Vectors,OV,Partial Match,Partial Match,8,,,,,,OVH,"If: to-time: $n^{2-\epsilon}*poly(d)$ for some $\epsilon > 0$
+Then: from-time: $n^{2-\epsilon'}*poly(d)$ for some $\epsilon' > 0$",2,6.S078 Lecture 6,https://people.csail.mit.edu/virgi/6.s078/lecture6-post.txt,2020,,,,
+,Partial Match,Partial Match,Orthogonal Vectors,OV,9,,,,,,OVH,"If: to-time: $n^{2-\epsilon}*poly(d)$ for some $\epsilon > 0$
+Then: from-time: $n^{2-\epsilon'}*poly(d)$ for some $\epsilon' > 0$",2,6.S078 Lecture 6,https://people.csail.mit.edu/virgi/6.s078/lecture6-post.txt,2020,,,,
+,3SUM,3SUM,3SUM,3SUM',10,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,3SUM,3SUM',3SUM,3SUM,11,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,3SUM,3SUM',Geometric Base,GeomBase,12,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,3SUM,3SUM',13,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,3SUM,3SUM,Geometric Incidence Problems,3 Points on Line,14,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Incidence Problems,3 Points on Line,Geometric Incidence Problems,Point on 3 Lines,15,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Incidence Problems,Point on 3 Lines,Geometric Incidence Problems,3 Points on Line,16,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Geometric Separator Problems,Separator1,17,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Geometric Separator Problems,Separator2,18,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Geometric Covering Problems,Strips Cover Box,19,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Strips Cover Box,Geometric Covering Problems,Triangles Cover Triangle,20,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Triangles Cover Triangle,Geometric Covering Problems,Hole in Union,21,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Hole in Union,Geometric Covering Problems,Triangles Cover Triangle,22,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Triangles Cover Triangle,Geometric Covering Problems,Triangle Measure,23,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Strips Cover Box,Geometric Covering Problems,Point Covering,24,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Geometric Visibility Problems,Visibility Between Segments,25,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Geometric Visibility Problems,Visibility From Infinity,26,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Triangles Cover Triangle,Geometric Visibility Problems,Visible Triangle,27,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Visibility Problems,Visible Triangle,Geometric Covering Problems,Triangles Cover Triangle,28,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Base,GeomBase,Motion Planning Problems,Planar Motion Planning,29,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,Geometric Covering Problems,Triangles Cover Triangle,Motion Planning Problems,3D Motion Planning,30,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Anka Gajentaan, Mark H Overmars,
+On a class of O(n2) problems in computational geometry,
+Computational Geometry,
+Volume 5, Issue 3,
+1995,
+Pages 165-185",https://doi.org/10.1016/0925-7721(95)00022-2,1995,,,,
+,3SUM,3SUM',Dihedral Rotation Queries,Static Dihedral Rotation Queries,31,,,,,real RAM,3SUM Hypothesis,"if: to-time $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $N^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Michael Soss, Jeff Erickson, Mark Overmars, Preprocessing chains for fast dihedral rotations is hard or even impossible, Computational Geometry, Volume 26, Issue 3, 2003, Pages 235-246",https://doi.org/10.1016/S0925-7721(02)00156-6,2003,,,,
+,3SUM,3SUM,Local Alignment,Local Alignment,32,,,,,word RAM,3SUM Hypothesis,"if: to-time $N^{2-\delta-\epsilon} for two strings of size $n$ and alphabet of size $n^{1-\delta}$ for some $\espilon > 0$,$\delta \in (0,1)$
+then: from-time: $n^{2-\epsilon'}$ for some $\epsilon' > 0$",2,"Abboud, Amir, Virginia Vassilevska Williams, and Oren Weimann. ""Consequences of faster alignment of sequences."" In International Colloquium on Automata, Languages, and Programming, pp. 39-51. Springer, Berlin, Heidelberg, 2014.",https://link.springer.com/chapter/10.1007/978-3-662-43948-7_4,2014,,,,
+,Boolean Satisfiability,CNF-SAT,Local Alignment,Local Alignment,33,,,,,,SETH,"if: to-time: $N^{2-\epsilon}$ for some $\epsilon > 0$ on two binary strings of length $N$
+then: from-time: $2^{(n-\epsilon')}$ for some $\epsilon' > 0$",2,"Abboud, Amir, Virginia Vassilevska Williams, and Oren Weimann. ""Consequences of faster alignment of sequences."" In International Colloquium on Automata, Languages, and Programming, pp. 39-51. Springer, Berlin, Heidelberg, 2014.",https://link.springer.com/chapter/10.1007/978-3-662-43948-7_4,2014,,,,
+,Boolean Satisfiability,CNF-SAT,Longest Common Subsequence,Longest Common Substring with don't cares,34,,,,,,SETH,"if: to-time: $N^{2-\epsilon}$ for some $\epsilon > 0$
+then: from-time: $2^{(n-\epsilon')}$ for some $\epsilon' > 0$",2,"Abboud, Amir, Virginia Vassilevska Williams, and Oren Weimann. ""Consequences of faster alignment of sequences."" In International Colloquium on Automata, Languages, and Programming, pp. 39-51. Springer, Berlin, Heidelberg, 2014.",https://link.springer.com/chapter/10.1007/978-3-662-43948-7_4,2014,,,,
+,Boolean Satisfiability,CNF-SAT,Local Alignment,Multiple Local Alignment,35,,,,,,SETH,"if: to-time: $N^{k-\epsilon}$ for some $\epsilon > 0$ on $k$ binary strings of length $n$ with $k$-wise scoring
+then: from-time: $2^{(n-\epsilon')}$ for some $\epsilon' > 0$",k,"Abboud, Amir, Virginia Vassilevska Williams, and Oren Weimann. ""Consequences of faster alignment of sequences."" In International Colloquium on Automata, Languages, and Programming, pp. 39-51. Springer, Berlin, Heidelberg, 2014.",https://link.springer.com/chapter/10.1007/978-3-662-43948-7_4,2014,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Graph Triangle Problems,Negative Triangle Detection,36,Subcubic equivalence,$O(n^2)$ calls to instances of size $O(n^{1/3})$,,,,APSP Hypothesis,"if: to-time: $n^{3-\epsilon}$ for some $\epsilon >0$
+then: from-time: $n^{3-\epsilon'}$ for some $\epsilon' > 0$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.",https://dl.acm.org/doi/pdf/10.1145/3186893,2018,,,,
+,CFG Problems,CFG Parsing,Matrix Product,BMM,37,Combinatorial,,,,,,"if: to-time: $O(n^{3-\epsilon})$ for some $\epsilon > 0$ where $n \times n$ matrix
+then: from-time: $O(gn^{3-\epsilon})$ where $g$ is the size of the CFG",3,"L. G. Valiant. 1975. General context-free recognition in less than cubic time. J. Comput. Syst. Sci. 10 (1975), 308–315.",https://www.sciencedirect.com/science/article/pii/S0022000075800468,1975,,,,
+,Matrix Product,BMM,CFG Problems,CFG Parsing,38,Combinatorial,,,,,,"if: to-time: $O(gn^{3-\epsilon})$ for some $\epsilon > 0$ where $g$ is the size of the CFG and $n$ is the size of the string
+then: from-time: $O(n^{3-\epsilon/3})$ where $n \times n$ matrix",3,"L. Lee. 2002. Fast context-free grammar parsing requires fast boolean matrix multiplication. J. ACM 49, 1 (2002), 1–15.",https://arxiv.org/abs/cs/0112018,2002,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Matrix Product,Matrix Product Verification,39,Strongly subcubic,,,,,,"if: to-time: $T(n)$
+then: from-time: $O(T(2n))$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 4.1",2018,,,,
+Generic runtimes for two $n \times n$ matrices,Matrix Product,Matrix Product,Graph Triangle Problems,Negative Triangle Detection,40,Strongly subcubic,,,,,,"if: to-time: $T(n)$ where $T(n)/n$ is decreasing
+then: from-time: $O(n^2 \cdot T(n^{1/3})\log W)$ for two $n\times n$ matrices where $W$ is the maxint of $R$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 4.2",2018,,,,
+,Graph Triangle Problems,Negative Triangle Search,Graph Triangle Problems,Negative Triangle Detection,41,Strongly subcubic,,,,,,"if: to-time: $T(n)$ where $T(n)/n$ is decreasing
+then: from-time: $O(T(n))$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Lemma 4.1",2018,,,,
+,Graph Triangle Problems,Negative Triangle Listing,Graph Triangle Problems,Negative Triangle Detection,42,Strongly subcubic,,,,,,"if: to-time: $O(n^{3-\epsilon}\log^c M)$ for some $\epsilon > 0$ and where $M$ is the maxint of $R$
+then: from-time: $O(n^{3-\epsilon'}\log^c M)$ for some $\epsilon' > 0$ for listing $\Delta = O(n^{3-\delta})$ negative triangles with fixed $\delta > 0$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 4.3",2018,,,,
+"$n \times n$ matrices and triangle problem over $R$
+Corollary to generic runtimes",Matrix Product,Matrix Product,Graph Triangle Problems,Negative Triangle Detection,43,Strongly subcubic,,,,,,"if: to-time: $O(n^3/\log^c n)$ for some constant $c$
+then: from-time: $O((\log W) n^3 / \log^c n)$ where $W$ is maxint of $R$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Corollary 4.1",2018,,,,
+Multiplying rectangular matrices,Matrix Product,Matrix Product,Graph Triangle Problems,Negative Triangle Detection,44,Strongly subcubic,,,,,,"if: to-time: $T(n)$
+then: from-time: $O(mp\cdot T(n^{1/3}) \log W)$ s.t. $mp \leq n^3$ and $\sqrt{p} \leq m \leq p^2$ and multiplying two matrices of dimensions $m \times n$ and $n \times p$ over $R$ and $W$ is the maxint of $R$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 4.4",2018,,,,
+,Maximum Subarray Problem,Maximum Subarray,Matrix Product,Distance Product,45,,,,,,,"if: to-time: $O(n^{3-\epsilon})$ for some $\epsilon > 0$
+then: from-time: $O(n^{3-\epsilon})$",3,Hisao Tamaki and Takeshi Tokuyama. 1998. Algorithms for the maximum subarray problem based on matrix multiplication. In Proceedings of the 9th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA’98). 446–452.,https://dl.acm.org/doi/abs/10.5555/314613.314823,1998,,,,
+Generic runtime but with $T(n)$ s.t. $T(n)/n^2$ is decreasing,Matrix Product,Matrix Product,Graph Triangle Problems,Negative Triangle Detection,46,"Strongly polynomial, probabilistic",,,,,,"if: to-time: $T(n)$ where $T(n)/n^2$ is decreasing
+then: from-time: $O(n^2 \cdot T(n^{1/3})\log n)$ for two $n\times n$ matrices with high probability",,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 4.5",2018,,,,
+,Minimum Witness,Minimum Witness Finding,Graph Triangle Problems,Negative Triangle Detection,47,,,,,,,"if: to-time: $T(n)$ where $n$ is the number of nodes in the graph
+then: from-time: $O(T(n))$",,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Lemma 4.4",2018,,,,
+,Minimum Witness,All Pairs Minimum Witness (APMW),Graph Triangle Problems,Negative Triangle Detection,48,,,,,,,"if: to-time: $T(n)$
+then: from-time: $O(T(n^{1/3})n^2)$",,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Lemma 4.5",2018,,,,
+,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",49,Subcubic equivalence,,,,,,"if: to-time: $T(n, M)$ where graph has weights in $[0, M]$
+then: from-time: $T(n, \Theta(M))$ where digraph has weights in $[-M, M]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.1",2018,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",50,Subcubic equivalence,,,,,APSP Hypothesis,"if: to-time: $T(n, \Theta(M))$ where digraph has weights in $[-M, M]$
+then: from-time: $T(n, M)$ where graph has weights in $[0, M]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.1",2018,,,,
+,Metricity,Metricity,Graph Triangle Problems,Negative Triangle Detection,51,Subcubic equivalence,,,,,,"if: to-time: $O(n^2) + T(O(n), O(M))$ where $T(n,M)$ is nondecreasing
+then: from-time: $O(n^2) + T(O(n), O(M))$ where the metricity problem is on $[n]$ s.t. all distances are in $[-M, M]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.2",2018,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Metricity,Metricity,52,Subcubic equivalence,,,,,,"if: to-time: $O(n^2) + T(O(n), O(M))$ where the metricity problem is on $[n]$ s.t. all distances are in $[-M, M]$, and $T(n,M)$ is nondecreasing
+then: from-time: $O(n^2) + T(O(n), O(M))$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.2",2018,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Graph Cycles,Shortest Cycle,53,Subcubic equivalence,,,,,,"if: to-time: $T(n,M)$ where there are $n$ nodes and weights in $[1, M]$
+then: from-time: $T(n, O(M))$ where there are $n$ nodes and weights in $[-M, M]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.3",2018,,"The Theorem states this as a subcubic equivalence, but only proves one direction, stating the other direction ""is already known""",,
+,Graph Triangle Problems,Negative Triangle Detection,Maximum Subarray Problem,Maximum Subarray,54,Subcubic equivalence,,$O(n^2)$,,,,,3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.4",2018,,,,
+,Maximum Subarray Problem,Maximum Subarray,Graph Triangle Problems,Negative Triangle Detection,55,Subcubic equivalence,,,,,,,3,Hisao Tamaki and Takeshi Tokuyama. 1998. Algorithms for the maximum subarray problem based on matrix multiplication. In Proceedings of the 9th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA’98). 446–452.,https://dl.acm.org/doi/abs/10.5555/314613.314823,1998,,Not really sure where in Tamaki's paper this is mentioned ,,
+,Graph Triangle Problems,Minimum Triangle,"Shortest Path
+(Directed graphs)",Second Shortest Simple Path,56,Subcubic equivalence,,,,,,"if: to-time: $T(n,W)$ where there are $n$ nodes and integer weights in $[0, W]$
+then: from-time: $T(O(n), O(nW))$ for $n$ node graph with integer weights in $[-W, W]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.5",2018,,,,
+,Matrix Product,Distance Product,"Shortest Path
+(Directed graphs)",Second Shortest Simple Path,57,Subcubic equivalence,,,,,,"if: to-time: $T(n,W)$ where there are $n$ nodes and integer weights in $[0, W]$
+then: from-time: $O(n^2 T(O(n^{1/3}), O(nW)) \log W)$ for two $n\times n$ matrices with weights in $[-W, W]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.5",2018,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP","Shortest Path
+(Directed graphs)",Second Shortest Simple Path,58,Subcubic equivalence,,,,,APSP Hypothesis,"if: to-time: $T(n,W)$ where there are $n$ nodes and integer weights in $[0, W]$
+then: from-time: $O(n^2 T(O(n^{1/3}), O(n^2W)) \log Wn)$ for graphs with weights in $[-W, W]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 5.5",2018,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP","Shortest Path
+(Directed graphs)",Replacement Paths Problem (RPP),59,Subcubic equivalence,,,,,APSP Hypothesis,"if: to-time: $T(n) \poly \log M$ in graphs with integer weights in $[0, M]$
+then: from-time: $O(n^2 T(O(n^{1/3}))\poly\log M)$ in graphs with integer weights in $[-M, M]$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Corollary 5.1",2018,,,,
+,Graph Triangle Problems,Triangle Detection,Independent Set Queries,Independent Set Queries,60,,,,,,,"if: to-time: $O(n^2 / \log^c n)$ to answer all subsequent batches of $\log n$ independent set queries from a graph that takes $O(n^k)$ time to preprocess for some $c,k > 0$
+then: from-time: $O(n^3 / \log^{c+1} n)$",2,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 6.5",2018,,,,This paper's Theorem 1.5 needs to be in this sheet somewhere
+,Matrix Product,BMM,Independent Set Queries,Independent Set Queries,61,,,,,,,"if: to-time: $O(n^2 / \log^c n)$ to answer all subsequent batches of $\log n$ independent set queries from a graph that takes $O(n^k)$ time to preprocess for some $c,k > 0$
+then: from-time: $O(n^3 / \log^{c+1} n)$",2,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 6.5",2018,,,,
+,Graph Triangle Problems,Negative Triangle,Price Query,Price Query,62,,,,,,,"if: to-time: $O(n^2 / f(n))$ to answer any subsequent price query after $n$-node edge-weighted graph is preprocessed in $O(^k)$ time for some constant $k > 0$
+then: from-time: $O(n^3 / f(n^{1/(2k)})$",2,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 1.5",2018,,,,
+,Graph Triangle Problems,Nondecreasing Triangle,Graph Triangle Problems,Triangle in Unweighted Graph,63,Strongly subcubic,,,,,,"if: to-time: $T(n)$ for unweighted graph
+then: from-time: $O(n^{3/2} \sqrt{T(O(n))})$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 7.1",2018,,,,
+,Matrix Product,"$(\min, \leq)$ Product",Graph Triangle Problems,Triangle in Unweighted Graph,64,Strongly subcubic,,,,,,"if: to-time: $T(n)$ for unweighted graph
+then: from-time: $O(n^{3/2} \sqrt{T(O(n))} \log n)$",3,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 7.1",2018,,,,
+,3SUM,All-Integers 3SUM,3SUM,3SUM,65,Subquadratic equivalence,,,,,3-SUM,"if: to-time: $O(n^{2-\epsilon})$ for some $\epsilon > 0$
+then: from-time: $O(n^{1.5} + n^{2-\epsilon / 2})$",2,"V. V. Williams, R. R. Williams, Subcubic Equivalences Between Path, Matrix, and Triangle Problems. 2018.","https://dl.acm.org/doi/pdf/10.1145/3186893, Theorem 8.1",2018,,,,
+,3SUM,3SUM,3SUM,All-Integers 3SUM,66,Subquadratic equivalence,,,,,3-SUM,"if: to-time: $T(n)$
+then: from-time: $O(T(n))$",2,Trivial,,,,,,
+,Graph Metrics,Directed Radius,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",67,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Graph Metrics,Undirected Radius,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",68,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Graph Metrics,Directed Median,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",69,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Graph Metrics,Undirected Median,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",70,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Vertex Centrality,Betweenness Centrality (BC),All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",71,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Vertex Centrality,Betweenness Centrality (BC),All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",72,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Vertex Centrality,Reach Centrality,Graph Metrics,Diameter,73,Subcubic equivalence,,,,,,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, ",2015,,,,
+,Boolean Satisfiability,CNF-SAT,Graph Metrics,Approximate Diameter,74,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ for some $\epsilon > 0$ for a $(3/2 - \epsilon)$-approximation
+then: from-time: $O*((2-\delta)^n)$ for constant $\delta > 0$",2,"L. Roditty and V. Vassilevska Williams. Fast approximation algorithms for the diameter and radius of sparse graphs. In STOC, pages 515–524, 2013.",https://people.csail.mit.edu/virgi/diam.pdf,2013,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Vertex Centrality,Betweenness Centrality (BC),75,,,,,,,"if: to-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge graph
+then: from-time: $\tilde{O}T(n,m))$",,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 2.2",2015,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Graph Metrics,Radius,76,,,,,,,"if: to-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge graph with integer weights in $[-M,M]$
+then: from-time: $\tilde{O}(T(n,m,M))$",,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 2.3",2015,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Graph Metrics,Median,77,,,,,,,"if: to-time: $\tilde{O}(T(n,M))$ for $n$-node $m$-edge graph with integer weights in $[-M, M]$
+then: from-time: $\tilde{O}T(n,M))$",,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 2.4",2015,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Vertex Centrality,All-Nodes Median Parity,78,,,,,,,"if: to-time: $\tilde{O}(T(n,M))$ for $n$-node $m$-edge graph with integer weights in $[-M, M]$
+then: from-time: $\tilde{O}T(n,M))$",,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 2.5",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Vertex Centrality,All-Nodes Median Parity,79,,,,,,SETH,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 2.1",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",Vertex Centrality,All-Nodes Median Parity,80,,,,,,SETH,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 2.1",2015,,,,
+,Graph Metrics,Diameter,Vertex Centrality,Reach Centrality,81,Subcubic equivalence,,,,,APSP Hypothesis,"if: to-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph
+then: from-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 3.1",2015,,,,
+For directed graphs only,Vertex Centrality,Reach Centrality,Graph Metrics,Diameter,82,Subcubic equivalence,,,,,APSP Hypothesis,"if: to-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge directed graph with integer weights in $[-M,M]$
+then: from-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge directed graph with integer weights in $[-M,M]$",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 3.2",2015,,,,
+,Graph Metrics,Diameter,Vertex Centrality,Positive Betweenness Centrality,83,,,,,,APSP Hypothesis,"if: to-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph
+then: from-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 4.1",2015,,,,
+,Vertex Centrality,Positive Betweenness Centrality,Graph Metrics,Diameter,84,,,,,,APSP Hypothesis,"if: to-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge directed (resp. undirected) graph with integer weights in $[-M,M]$
+then: from-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge directed (resp. undirected) graph with integer weights in $[-M,M]$",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 4.2",2015,,,,
+,Vertex Centrality,Reach Centrality,Vertex Centrality,Positive Betweenness Centrality,85,,,,,,,"if: to-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph
+then: from-time: $\tilde{O}(T(n,m))$ for $n$-node $m$-edge directed (resp. undirected) graph",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 4.3",2015,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Vertex Centrality,All-Nodes Positive Betweenness Centrality,86,,,,,,,"if: to-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge graph with integer weights in $[-M,M]$
+then: from-time: $\tilde{O}(T(n,m,M))$ for $n$-node $m$-edge graph with integer weights in $[-M,M]$",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 4.4",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Vertex Centrality,Directed All-Nodes Positive Betweenness Centrality,87,,,,,,APSP Hypothesis,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.1",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",Vertex Centrality,Undirected All-Nodes Positive Betweenness Centrality,88,,,,,,APSP Hypothesis,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.1",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Vertex Centrality,Directed All-Nodes Reach Centrality,89,,,,,,APSP Hypothesis,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.1",2015,,,,
+,All-Pairs Shortest Paths (APSP),"Undirected, Weighted APSP",Vertex Centrality,Undirected All-Nodes Reach Centrality,90,,,,,,APSP Hypothesis,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.1",2015,,,,
+$\alpha$-approximation with $\alpha > 1$,Graph Metrics,Diameter,Vertex Centrality,Approximate Betweenness Centrality,91,Subcubic Monte-Carlo equivalence,,,,,APSP Hypothesis,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Theorem 4.2",2015,,,,
+$\alpha$-approximation with $\alpha > 1$,Vertex Centrality,Approximate Betweenness Centrality,Graph Metrics,Diameter,92,Subcubic Monte-Carlo equivalence,,,,,APSP Hypothesis,,3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Theorem 4.2",2015,,,,
+,Vertex Centrality,Betweenness Centrality (BC),Graph Metrics,Diameter,93,,,,,,APSP Hypothesis,"if: to-time: Truly subcubic
+then: from-time: Truly subcubic Monte-Carlo PTAS",3,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Lemma 4.10",2015,,,,
+"Positive Betweenness Centrality in directed or undirected graphs with weights in $\{1, 2\}$",Boolean Satisfiability,CNF-SAT,Vertex Centrality,Positive Betweenness Centrality,94,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ for some $\epsilon > 0$
+then: from-time: $O*(2^{(1-\delta)n})$ for some $\delta > 0$",2,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Theorem 4.3",2015,,,,
+$\alpha$-approximation for any finite $\alpha$ (possibly depending on $m$),Boolean Satisfiability,CNF-SAT,Vertex Centrality,Approximate Betweenness Centrality,95,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ for some $\epsilon > 0$
+then: from-time: $O*(2^{(1-\delta)n})$ for some $\delta > 0$",2,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.2",2015,,,,
+$\alpha$-approximation for any finite $\alpha$ (possibly depending on $m$),Boolean Satisfiability,CNF-SAT,Vertex Centrality,Approximate Reach Centrality,96,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ for some $\epsilon > 0$
+then: from-time: $O*(2^{(1-\delta)n})$ for some $\delta > 0$",2,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Corollary 4.2",2015,,,,
+"$(2-\epsilon)$-approximation in undirected, unweighted graphs for some constant $\epsilon > 0$",Boolean Satisfiability,CNF-SAT,Vertex Centrality,Approximate Reach Centrality,97,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$
+then: from-time: $O*(2^{(1-\epsilon/2)n})$",2,"Amir Abboud, Fabrizio Grandoni, and Virginia Vassilevska Williams. Subcubic equivalences between graph centrality problems, APSP and diameter. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2015, San Diego, CA, USA, January 4-6, 2015, pages 1681–1697, 2015.","https://epubs.siam.org/doi/10.1137/1.9781611973730.112, Theorem 4.4",2015,,,,
+,Clique,Min-Weight k-Clique,Graph Cycles,Minimum Weight k-Cycle,98,,,,,,Min-Weight k-Clique Hypothesis,"if: to-time: $O(nm^{\lceil k/2 \rceil / \lambda - \epsilon})$ for any $\epsilon > 0$ for $m = \Theta(n^{1+1/(\lambda - 1)}) edges and $n$ nodes where $\lambda = k - \lceil k/2 \rceil + 1$
+then: from-time: $O(n^{k - \epsilon})$ for some $\epsilon > 0$",,"Andrea Lincoln, Virginia Vassilevska Williams, and R. Ryan Williams. Tight hardness for shortest cycles and paths in sparse graphs. In Proc. SODA, page to appear, 2018.","https://arxiv.org/pdf/1712.08147v2.pdf, Corollary 4.2",2018,,Not sure this from-time is correct,,
+,Graph Cycles,Min-Weight k-Cycle,Wiener Index,Undirected Wiener Index,99,,,,,,Min-Weight k-Clique Hypothesis,"if: to-time: $f(N,M)$ for N nodes, M edges
+then: from-time: $\tilde{O}(f(N,M)+M)$",,"Andrea Lincoln, Virginia Vassilevska Williams, and R. Ryan Williams. Tight hardness for shortest cycles and paths in sparse graphs. In Proc. SODA, page to appear, 2018.","https://arxiv.org/pdf/1712.08147v2.pdf, Theorem B.2",2018,,,,
+,Boolean Satisfiability,CNF-SAT,Vertex Centrality,#SSR,100,,,,,,SETH,"if: to-time: $O(m^{1-\epsilon})$ amrotized update and query times on sparse graphs, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",1,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"#SSR: Single Source Reachability Count (#SSR), maintain: a directed graph with a fixed source $s$, under: edge insertions/delitions, answer: given $l$ is the number of nodes reachable from $s<l$",,
+,Boolean Satisfiability,CNF-SAT,Strongly Connected Components,SC2,101,,,,,,SETH,"if: to-time: $O(m^{1-\epsilon})$ amrotized update and query times on sparse graphs, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",1,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"SC2: 2 Strong Components, maintain: a directed graph, under: edge insertion/deletions, answer: are there more than 2 strongly connected components?",,
+,Boolean Satisfiability,CNF-SAT,Strongly Connected Components,MaxSCC,102,,,,,,SETH,"if: to-time: $O(m^{1-\epsilon})$ amrotized update and query times on sparse graphs, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",1,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"MaxSCC: Maximum Strongly Connected Component, maintain: a directed graph, under: edge insertions/deletions, answer: what is the size of the largest SCC?",,
+,Boolean Satisfiability,CNF-SAT,Strongly Connected Components,Connected Subgraph,103,,,,,,SETH,"if: to-time: $O(m^{1-\epsilon})$ amrotized update and query times on sparse graphs, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",1,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"ConnSub: Connected Subgraph, maintain: a fixed undirected graph and a vertex subset $S$, under: insert/remove a node into/from $S$, answer: is the subgraph induced by $S$ connected?",,
+,Boolean Satisfiability,CNF-SAT,Graph Metrics,4/3-Diameter,104,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ amrotized update and query times, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",2,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"4/3-Diameter: $(4/3-\epsilon)$-Approximate Diameter, maintain: an undeirected graph, under: edge insertions/deletions, answer: is the diameter 3 or 4?",,
+,Boolean Satisfiability,CNF-SAT,Vertex Reachability,ST-Reach,105,,,,,,SETH,"if: to-time: $O(m^{2-\epsilon})$ amrotized update and query times, for any $\epsilon > 0$, even after arbitrarily long polynomial time preprocessing
+then: SETH is false",2,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"ST-Reach: $(S,T)$-Reacability, maintain: a directed graph and fixed node subsets $S$ and $T$, under: edge insertions/deletions, answer is the diameter 3 or 4?",,
+,Graph Triangle Problems,Triangle Detection,Vertex Reachability,st-Reach,106,,,,,,Strong Triangle,"assume: SETH
+then: for any fixed constants $\epsilon > 0$, $c_1,c_2 \in [0,1]$, on graphs with $n$ nodes $|S|=\tilde{\Theta}(n^{c_1})$, $|T|=\tilde{\Theta(n^{c_2})}$, $m=O(n)$ edges, and capacaties in $\{1,\cdots,n\}$, target cannot be solved in $O((|S||T|m)^{1-\epsilon})$",,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"$s,t$-Reach: $(s,t)$-Reachability, maintain: a directed graph and fixed vertices $s,t$, under: edge insertions/deletions, answer: is $t$ reachable from $s$? ",,
+,Graph Triangle Problems,Triangle Detection,Strongly Connected Components,Strong Connectivity (dynamic),107,,,,,,Strong Triangle,"let $\gamma = (w-1)/(w+1) \in [1/3,0.408]$
+if: to-time: $O(m^{2\gamma-\epsilon})$ update and query times even after O(m^{1+\gamma-\epsilon}) preprocessing time for any $\epsilon > 0$
+then: Strong Triangle is false",,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"strong connectivity, maintain: a directed graph, under edge insertions/deletions, answer: is the graph strongly connected?",,
+,Graph Triangle Problems,Triangle Detection,Maximum-Weight Matching,Bipartite Maximum-Weight Matching,108,,,,,,Strong Triangle,"let $\gamma = (w-1)/(w+1) \in [1/3,0.408]$
+if: to-time: $O(m^{2\gamma-\epsilon})$ update and query times even after O(m^{1+\gamma-\epsilon}) preprocessing time for any $\epsilon > 0$
+then: Strong Triangle is false",,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"bipartite matching: Bipartite Perfect Matching, maintain: an undirected bipartite graph, under: edge insertions/deletions, answer: does the graph have a perfect matching",,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP","Shortest Path
+(Directed graphs)",$st$-Shortest Path,109,,,,,,APSP Hypothesis,"if: to-time: amortized $O(n^{2-\epsilon})$ update and query times in decremental or incremental graphs
+then: APSP Hypothesis is false",2,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"$st$-SP: $(s,t)$-shortest path: maintain an undirected weighted graph and fixed vertices $s,t$, under: edge insertions/deletions, answer: what is the distance between $s$ and $t$",,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Maximum-Weight Matching,Bipartite Maximum-Weight Matching,110,,,,,,APSP Hypothesis,"if: to-time: amortized $O(n^{2-\epsilon})$ update and query times in decremental or incremental graphs
+then: APSP Hypothesis is false",2,"Abboud, Amir, and Virginia Vassilevska Williams. ""Popular conjectures imply strong lower bounds for dynamic problems."" In 2014 IEEE 55th Annual Symposium on Foundations of Computer Science, pp. 434-443. IEEE, 2014.",https://ieeexplore.ieee.org/abstract/document/6979028?casa_token=daaoBjrHUa4AAAAA:DCjk_WMWZ5Is6KvGpmS8a2bL9LskvV0P1zEG4U2u-Tm_C8sixu1w65OpTyjml1HEpaikXhtYsg,2014,,"BWMatch: Bipartite Maximum Weight Matching, maintain: an undirected bipartite graph with integer edge weights, under: edge insertions/deletions, answer: what is the weight of the maximum weight matching",,
+,Boolean Satisfiability,MAX-CNF-SAT,Maximum Flow,st-Maximum Flow,111,,,,,,SETH,"assume: SETH
+then: for any fixed constants $\epsilon > 0$, $c_1,c_2 \in [0,1]$, on graphs with $n$ nodes $|S|=\tilde{\Theta}(n^{c_1})$, $|T|=\tilde{\Theta(n^{c_2})}$, $m=O(n)$ edges, and capacaties in $\{1,\cdots,n\}$, target cannot be solved in $O((|S||T|m)^{1-\epsilon})$",,"Krauthgamer, R., & Trabelsi, O. (2018). Conditional lower bounds for all-pairs max-flow. ACM Transactions on Algorithms (TALG), 14(4), 1-15.",https://dl.acm.org/doi/abs/10.1145/3212510,2018,,,,
+,Boolean Satisfiability,MAX-CNF-SAT,Maximum Flow,All-Pairs Maximum Flow,112,,,,,,SETH,"assume: SETH
+then: for any fixed $\epsilon > 0$, in graphs with $n$ nodes, $m=O(n)$ edges, and capacities in $\{1,\cdots,n\}$ target cannot be solved in time $O((n^{2}m)^{1-\epsilon})$",3,"Krauthgamer, R., & Trabelsi, O. (2018). Conditional lower bounds for all-pairs max-flow. ACM Transactions on Algorithms (TALG), 14(4), 1-15.",https://dl.acm.org/doi/abs/10.1145/3212510,2018,,,,
+,Boolean Satisfiability,MAX-CNF-SAT,Maximum Flow,All-Pairs Maximum Flow,113,,,,,,SETH,"assume: SETH
+then: for any fixed constants $\epsilon > 0$, $c_1,c_2 \in [0,1]$, on graphs with $n$ nodes $|S|=\tilde{\Theta}(n^{c_1})$, $|T|=\tilde{\Theta(n^{c_2})}$, $m=O(n)$ edges, and capacaties in $\{1,\cdots,n\}$, target cannot be solved in $O((|S||T|m)^{1-\epsilon})$",,"Krauthgamer, R., & Trabelsi, O. (2018). Conditional lower bounds for all-pairs max-flow. ACM Transactions on Algorithms (TALG), 14(4), 1-15.",https://dl.acm.org/doi/abs/10.1145/3212510,2018,,,,
+,Boolean Satisfiability,MAX-CNF-SAT,Maximum Flow,st-Maximum Flow,114,,,,,,SETH,"assume: SETH
+then: for any fixed $\epsilon > 0$, in graphs with $n$ nodes, $m=O(n)$ edges, and capacities in $\{1,\cdots,n\}$ target cannot be solved in time $O((n^{2}m)^{1-\epsilon})$",3,"Krauthgamer, R., & Trabelsi, O. (2018). Conditional lower bounds for all-pairs max-flow. ACM Transactions on Algorithms (TALG), 14(4), 1-15.",https://dl.acm.org/doi/abs/10.1145/3212510,2018,,,,
+,Boolean Satisfiability,MAX-CNF-SAT,Maximum Flow,Maximum Local Edge Connectivity,115,,,,,,SETH,"assume: SETH
+then: for any $\epsilon > 0$, in graphs with $n$ nodes and $\tilde{O}(n)$ edges, target cannot be solved in time $O(n^{2-\epsilon})$",2,"Krauthgamer, R., & Trabelsi, O. (2018). Conditional lower bounds for all-pairs max-flow. ACM Transactions on Algorithms (TALG), 14(4), 1-15.",https://dl.acm.org/doi/abs/10.1145/3212510,2018,,,,
+,Matrix-Vector Multiplication,OuMv,Maximum Cardinality Matching,Bipartite Graph MCM,116,,,,,,OMv Conjecture,"assume: OMv
+then: there is no algorithm for solving incremental (or decremental) maximum cardinality bipartite matching with amortized time $O(n^{1-\epsilon})$ per insertion (or deletion) and $O(n^{2-\epsilon})$ time per query for any $\epsilon > 0$",2,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Boolean Satisfiability,CNF-SAT,Maximum Flow,dynamic st-Maximum Flow,117,,,,,,SETH,"assume: SETH
+then: there is no algorithm for solving incremental (or decremental) st-max-flow on a weighted and directed graph with $n$ nodes and $\tilde{O}(n)$ edges with amortized time $O(m^{1-\epsilon})$ per operation for any $\epsilon > 0$",1,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Matrix-Vector Multiplication,OuMV,Maximum Flow,dynamic st-Maximum Flow,118,,,,,,OMv Conjecture,"assume: OMv
+then: there is no algorithm for solving incremental (or decremental) st-max-flow on unweifghted directed graphs or weighted undirected graphs on $n$ nodes with amortized time $O(n^{1-\epsilon})$ per operation for any $\epsilon > 0$",1,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Graph Triangle Problems,Triangle Collection*,Graph Metrics,dynamic 4/3-Diameter,119,,,,,,SETH or 3SUM Hypothesis or APSP Hypothesis,"assume: SETH or 3SUM Hypothesis or APSP Hypothesis
+then: there exists no incremental (or decremental) algorithm that approximates the diameter of unweighted graph within a factor of $4/3-\epsilon$ running in amortized time $O(n^{1/2-\epsilon'})$ for any $\epsilon,\epsilon' > 0$. Furthermore, if we allow node insertions in the incremental case the bound is $O(n^{0.618-\epsilon'})$",0.5,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Graph Triangle Problems,Triangle Collection*,Graph Metrics,dynamic 4/3-Diameter,120,,,,,,SETH or 3SUM Hypothesis or APSP Hypothesis,"assume: SETH or 3SUM Hypothesis or APSP Hypothesis
+then: there exists no static $4/3-\epsilon$ approximation to the diameter on unweighted graphs running in $O((n\sqrt{m})^{1-\epsilon'})$ time for any $\epsilon,\epsilon' > 0$ and an number of edges $m$",0.5,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Graph Triangle Problems,Triangle Collection*,Graph Metrics,dynamic 4/3-Diameter,121,,,,,,SETH or 3SUM Hypothesis or APSP Hypothesis,"assume: SETH or 3SUM Hypothesis or APSP Hypothesis
+then: there exists no static $4/3-\epsilon$ approximation with additive error $O(m^\delta)$ with running time $O(m^{\frac{3}{2}(1-\delta)-\epsilon'})$ or incremental/decremental algorithm with amortized time $O(m^{\frac{1}{2}-\frac{3\delta}{2}-\epsilon'})$ for any $\epsilon,\epsilon' > 0$",0.5,"Dahlgaard, S. (2016). On the hardness of partially dynamic graph problems and connections to diameter. arXiv preprint arXiv:1602.06705.",https://arxiv.org/abs/1602.06705,2016,,,,
+,Matrix Product,BMM,Vertex Reachability,2-sensitive incremental st-reach,122,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,Vertex Reachability,1-sensitive incremental ss-reach,123,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,Vertex Reachability,ap-reach,124,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,"Shortest Path
+(Directed graphs)",2-sensitive (7/5)-approximate st-shortest paths,125,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$ in undirected unweighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,"Shortest Path
+(Directed graphs)",1-sensitive (3/2)-approximate ss-shortest paths,126,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$ in undirected unweighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,"Shortest Path
+(Directed graphs)",(5/3)-approximate ap-shortest paths,127,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,Graph Metrics,1-sensitive (4/3)-approximate decremental diameter,128,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$ in undirected unweighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,Graph Metrics,1-sensitive (4/3)-approximate decremental eccentricity,129,,,,,,BMM Hypothesis,"assume: BMM
+then: combinatorial algorithms cannot solve target with preprocessing time $O(n^{3-\epsilon})$, and update and query times $O(n^{2-\epsilon)$ for any $\epsilon > 0$ in undirected unweighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Matrix Product,BMM,"Shortest Path
+(Directed graphs)",1-sensitive decremental st-shortest paths,130,,,,,,BMM Hypothesis,"assume: BMM
+then: for directed unweighted graphs with $n$ vertices and $m \geq n$ edges require either $m^{1-o(1)}\sqrt{n}$ preprocessing time or $m^{1-o(1)}/\sqrt{n}$ query time for every function $m$ of $n$",1,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,"Shortest Path
+(Directed graphs)",Replacement Paths Problem (RPP),"Shortest Path
+(Directed graphs)",1-sensitive decremental st-shortest paths,131,,,,,,APSP Hypothesis,"assume: APSP Hypothesis
+then: target cannot be solved with preprocessing time $O(n^{3-\epsilon})$ and update and query times $O(n^{2-\epsilon})$ for any $\epsilon > 0$ in directed weighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP","Shortest Path
+(Directed graphs)",2-sensitive decremental st-shortest paths,132,,,,,,APSP Hypothesis,"assume: APSP Hypothesis
+then: target cannot be solved with preprocessing time $O(n^{3-\epsilon})$ and update and query times $O(n^{2-\epsilon})$ for any $\epsilon > 0$ in undirected weighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,All-Pairs Shortest Paths (APSP),"Directed, Weighted APSP",Graph Metrics,1-sensitive decremental diameter,133,,,,,,APSP Hypothesis,"assume: APSP Hypothesis
+then: target cannot be solved with preprocessing time $O(n^{3-\epsilon})$ and update and query times $O(n^{2-\epsilon})$ for any $\epsilon > 0$ in undirected weighted graphs",2,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Boolean Satisfiabiltiy,CNF-SAT,Vertex Reachability,sensitive incremental #SSR,134,,,,,,SETH,"assume: SETH
+then: let $\epsilon > 0$, $t \in \mathbb{N}$, there exists no algorithm for target with preprocessing time $O(n^t)$, update time $u(n)$ and query time $q(n)$, such that $max\{u(n),q(n)\}=O(n^{1-\epsilon})$ with constant sensitivity $K(\epsilon,t)$",1,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Boolean Satisfiabiltiy,CNF-SAT,Graph Metrics,constant sensitivity (4/3)-approximate incremental diameter,135,,,,,,SETH,"assume: SETH
+then: let $\epsilon > 0$, $t \in \mathbb{N}$, there exists no algorithm for target with preprocessing time $O(n^t)$, update time $u(n)$ and query time $q(n)$, such that $max\{u(n),q(n)\}=O(n^{1-\epsilon})$ with constant sensitivity $K(\epsilon,t)$",1,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Boolean Satisfiabiltiy,CNF-SAT,Vertex Reachability,sensitive incremental ST-Reach,136,,,,,,SETH,"assume: SETH
+then: let $\epsilon > 0$, $t \in \mathbb{N}$, there exists no algorithm for target with preprocessing time $O(n^t)$, update time $u(n)$ and query time $q(n)$, such that $max\{u(n),q(n)\}=O(n^{1-\epsilon})$ with constant sensitivity $K(\epsilon,t)$",1,"Henzinger, M., Lincoln, A., Neumann, S., & Williams, V. V. (2017). Conditional hardness for sensitivity problems. arXiv preprint arXiv:1703.01638.",https://arxiv.org/pdf/1703.01638.pdf,2017,,,,
+,Orthogonal Vectors,OV,Bichromatic Hamming Close Pair,Bichromatic Hamming Close Pair,137,,,,,,OVH,"assume: OVH
+then: there is no algorithm to solve target in time $O(2^{o(d)}n^{2-\epsilon})$ on a set of $n$ points in $\{0,1\}^{c\log n}$",2,"Alman, J., & Williams, R. (2015, October). Probabilistic polynomials and hamming nearest neighbors. In 2015 IEEE 56th Annual Symposium on Foundations of Computer Science (pp. 136-150). IEEE.",https://ieeexplore.ieee.org/abstract/document/7354392,2015,,,,
+,Clique,k-Clique,CFG Problems,CFG Recognition,138,,,,,,k-Clique Hypothesis,"assume: k-Clique Hypothesis
+then: there is no $O(N^{\omega-\epsilon}) time algorithm for target for any $\epsilon > 0$",\Omega,"Abboud, A., Backurs, A., Bringmann, K., & Künnemann, M. (2017, October). Fine-grained complexity of analyzing compressed data: Quantifying improvements over decompress-and-solve. In 2017 IEEE 58th Annual Symposium on Foundations of Computer Science (FOCS) (pp. 192-203). IEEE.",https://ieeexplore.ieee.org/abstract/document/8104058,2017,,,,
+,Clique,k-Clique,RNA Folding,RNA Folding,139,,,,,,k-Clique Hypothesis,"assume: k-Clique Hypothesis
+then: there is no $O(N^{\omega-\epsilon}) time algorithm for target for any $\epsilon > 0$",\Omega,"Abboud, A., Backurs, A., Bringmann, K., & Künnemann, M. (2017, October). Fine-grained complexity of analyzing compressed data: Quantifying improvements over decompress-and-solve. In 2017 IEEE 58th Annual Symposium on Foundations of Computer Science (FOCS) (pp. 192-203). IEEE.",https://ieeexplore.ieee.org/abstract/document/8104058,2017,,,,
+,Clique,k-Clique,CFG Problems,CFG Recognition,140,,,,,combinatorial,k-Clique Hypothesis,"assume: k-Clique Hypothesis
+then: there is no $O(N^{\3-\epsilon}) time combinatorial algorithm for target for any $\epsilon > 0$",3,"Abboud, A., Backurs, A., Bringmann, K., & Künnemann, M. (2017, October). Fine-grained complexity of analyzing compressed data: Quantifying improvements over decompress-and-solve. In 2017 IEEE 58th Annual Symposium on Foundations of Computer Science (FOCS) (pp. 192-203). IEEE.",https://ieeexplore.ieee.org/abstract/document/8104058,2017,,,,
+,Clique,k-Clique,RNA Folding,RNA Folding,141,,,,,combinatorial,k-Clique Hypothesis,"assume: k-Clique Hypothesis
+then: there is no $O(N^{\3-\epsilon}) time combinatorial algorithm for target for any $\epsilon > 0$",3,"Abboud, A., Backurs, A., Bringmann, K., & Künnemann, M. (2017, October). Fine-grained complexity of analyzing compressed data: Quantifying improvements over decompress-and-solve. In 2017 IEEE 58th Annual Symposium on Foundations of Computer Science (FOCS) (pp. 192-203). IEEE.",https://ieeexplore.ieee.org/abstract/document/8104058,2017,,,,
+,Boolean Satisfiability,k-SAT,The Subset-Sum Problem,Subset Sum,142,,,,,,SETH,"assume: SETH
+then: for any $\epsilon > 0$ there exists a $\delta > 0$ such that Subset Sum is not in time $O(T^{1-\epsilon}2^{\delta n})$, and $k$-Sum is not in time $O(T^{1-\epsilon}n^{\delta k})$",,"Abboud, A., Bringmann, K., Hermelin, D., & Shabtay, D. (2022). SETH-based lower bounds for subset sum and bicriteria path. ACM Transactions on Algorithms (TALG), 18(1), 1-22.",https://dl.acm.org/doi/full/10.1145/3450524,2022,,,,
+,Orthogonal Vectors,OV,Graph Isomorphism Problem,Subtree Isomorphism,143,,,,,,OVH,"assume: OVH
+then: for all $d \geq 2$, target on two rooted unordered trees of size $O(n)$, degree $d$, and height $h \leq 2\log_d n + O(\log \log n)$ cannot be solved in truly subquadratic $O(n^{2-\epsilon})$ time",2,"Abboud, A., Backurs, A., Hansen, T. D., Vassilevska Williams, V., & Zamir, O. (2018). Subtree isomorphism revisited. ACM Transactions on Algorithms (TALG), 14(3), 1-23.",https://dl.acm.org/doi/pdf/10.1145/3093239,2018,,,,
+,Orthogonal Vectors,OV,Graph Isomorphism Problem,Largest Common Subtree,144,,,,,,OVH,"assume: OVH
+then: for all constants $d \geq 2$, target on two rooted trees of size at most $n$, degree $d$, and height $h \leq \log_d n + O(\log \log n)$ cannot be solved in truly subquadtratic $O(n^{2-\epsilon})$ time",2,"Abboud, A., Backurs, A., Hansen, T. D., Vassilevska Williams, V., & Zamir, O. (2018). Subtree isomorphism revisited. ACM Transactions on Algorithms (TALG), 14(3), 1-23.",https://dl.acm.org/doi/pdf/10.1145/3093239,2018,,,,
+,Graph Triangle Problems,Triangle Detection,Model-Checking Problem,Disjunctive coBüchi Objectives,145,,,,,,Strong Triangle,"assume: Strong Triangle
+then: there is no combinatorial $O(n^{3-\epsilon})$ or $O((k\cdot n^2)^{1-\epsilon})$-time algorithm for any $epsilon > 0$ for generalized Büchi games. In particular, there is no such algorithm deciding whether the winning set is non-empty or deciding whether a specific vertex is in the winning set.",3,"Chatterjee, K., Dvořák, W., Henzinger, M., & Loitzenbauer, V. (2016). Conditionally Optimal Algorithms for Generalized B\"" uchi Games. arXiv preprint arXiv:1607.05850.",https://arxiv.org/pdf/1607.05850.pdf,2016,,,,
+,Orthogonal Vectors,OV,Model-Checking Problem,Generalized Büchi Games,146,,,,,,OVH,"assume: OVH
+then: there is no $O(m^{2-\epsilon})$ or $O(\min_{1 \leq i \leq k} b_i \cdot (k \cdot m)^{1-\epsilon})$-time algorithm (for any $\epsilon > 0$ for generalized Büchi games. In particular there is no such algorithm for deciding whether the winning set is non-empty  or deciding whether a specifc vertex is in the winning set.",2,"Chatterjee, K., Dvořák, W., Henzinger, M., & Loitzenbauer, V. (2016). Conditionally Optimal Algorithms for Generalized B\"" uchi Games. arXiv preprint arXiv:1607.05850.",https://arxiv.org/pdf/1607.05850.pdf,2016,,,,
+,Graph Triangle Problems,Triangle Detection,Model-Checking Problem,Disjunctive Queries of Reachability in MDPs,147,,,,,,Strong Triangle,"assume: Strong Triangle
+then: there is no combinatorial $O(n^{3-\epsilon}) or $O((k \cdot n^2)^{1-\epsilon}) algorithm for any $\epsilon > 0$ for target. The bounds holf for dense MDPs with $m=\Theta(n^2)$",3,"Chatterjee, Krishnendu, et al. ""Model and objective separation with conditional lower bounds: Disjunction is harder than conjunction."" Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science. 2016.",https://dl.acm.org/doi/pdf/10.1145/2933575.2935304,2016,,,,
+,Orthogonal Vectors,OV,Model-Checking Problem,Disjunctive Queries of Reachability in MDPs,148,,,,,,Strong Triangle,"assume: Strong Triangle
+then: there is no $O(m^{2-\epsilon}) or $O((k \cdot m)^{1-\epsilon})$ algorithm, for any $\epsilon > 0$ for target.",2,"Chatterjee, Krishnendu, et al. ""Model and objective separation with conditional lower bounds: Disjunction is harder than conjunction."" Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science. 2016.",https://dl.acm.org/doi/pdf/10.1145/2933575.2935304,2016,,,,
+,Graph Triangle Problems,Triangle Detection,Model-Checking Problem,Disjunctive Queries of Safety in Graphs,149,,,,,combinatorial,Strong Triangle,"assume: Strong Triangle
+then: there is no combinatorial $O(n^{3-\epsilon})$ or $O((k \cdot n^2)^{1-\epsilon})$ algorithm, for any $\epsilon > 0$ for disjunctive safety (objectives or queries) in graphs.",3,"Chatterjee, Krishnendu, et al. ""Model and objective separation with conditional lower bounds: Disjunction is harder than conjunction."" Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science. 2016.",https://dl.acm.org/doi/pdf/10.1145/2933575.2935304,2016,,,,
+,Orthogonal Vectors,OV,Model-Checking Problem,Disjunctive Queries of Safety in Graphs,150,,,,,,OVH,"assume: OVH
+then: there is no $O(m^{2-\epsilon})$ or $O((k \cdot m)^{1 - \epsilon})$ algorithm for any $\epsilon > 0$ for disjunctive safety ovjectives/queries in MDPs.",2,"Chatterjee, Krishnendu, et al. ""Model and objective separation with conditional lower bounds: Disjunction is harder than conjunction."" Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science. 2016.",https://dl.acm.org/doi/pdf/10.1145/2933575.2935304,2016,,,,
+,Maximum Inner Product Search,Maximum Inner Product Search,Stable Matching Problems,Boolean d-Attribute Stable Matching,151,,,,,,OVH,"assume: OVH
+then: for an $\epsilon > 0$ there is a $c$ such that finding a stable matching in the boolean $d$-attribute model with $d = c\log n$ dimensions requires time $\Omega(n^{2-\epsilon}).",2,"Moeller, Daniel, Ramamohan Paturi, and Stefan Schneider. ""Subquadratic algorithms for succinct stable matching."" International Computer Science Symposium in Russia. Springer, Cham, 2016.",https://arxiv.org/pdf/1510.06452.pdf,2016,,,,
+,Maximum Inner Product Search,Maximum Inner Product Search,Stable Matching Problems,Stable Matching Verification,152,,,,,,OVH,"assume: OVH
+then: for an $\epsilon > 0$ there is a $c$ such that verifying a stable matching in the boolean $d$-attribute model with $d = c\log n$ dimensions requires time $\Omega(n^{2-\epsilon}).",2,"Moeller, Daniel, Ramamohan Paturi, and Stefan Schneider. ""Subquadratic algorithms for succinct stable matching."" International Computer Science Symposium in Russia. Springer, Cham, 2016.",https://arxiv.org/pdf/1510.06452.pdf,2016,,,,
+,Maximum Inner Product Search,Maximum Inner Product Search,Stable Matching Problems,Stable Pair Checking,153,,,,,,OVH,"assume: OVH
+then: for any $\epsilon > 0$, there is a $c$ such that determining whether a given pair is part of any or all stable matchings in the boolean $d$-attribute model with $d = c\log n$ dimensions requires time $\Omega(n^{2-\epsilon})$",2,"Moeller, Daniel, Ramamohan Paturi, and Stefan Schneider. ""Subquadratic algorithms for succinct stable matching."" International Computer Science Symposium in Russia. Springer, Cham, 2016.",https://arxiv.org/pdf/1510.06452.pdf,2016,,,,
+,Maximum Inner Product Search,Maximum Inner Product Search,Stable Matching Problems,Stable Pair Checking,154,,,,,co-nondeterministic Turing Machine,NSETH,"assume: NSETH
+then: for any $\epsilon > 0$ there is a $c$ such that determining whether a gaiven pair is part of any or all stable matching in the boolean $d$-attribute model with $d = c\log n$ dimensions requires co-nondeterministic time $\Omega(n^{2-\epsilon})$",2,"Moeller, Daniel, Ramamohan Paturi, and Stefan Schneider. ""Subquadratic algorithms for succinct stable matching."" International Computer Science Symposium in Russia. Springer, Cham, 2016.",https://arxiv.org/pdf/1510.06452.pdf,2016,,,,
+,Maximum Inner Product Search,Maximum Inner Product Search,Stable Matching Problems,Stable Pair Checking,155,,,,,nondeterministic Turing Machine,NSETH,"assume: NSETH
+then: for any $\epsilon > 0$ there is a $c$ such that determining whether a gaiven pair is part of any or all stable matching in the boolean $d$-attribute model with $d = c\log n$ dimensions requires nondeterministic time $\Omega(n^{2-\epsilon})$",2,"Moeller, Daniel, Ramamohan Paturi, and Stefan Schneider. ""Subquadratic algorithms for succinct stable matching."" International Computer Science Symposium in Russia. Springer, Cham, 2016.",https://arxiv.org/pdf/1510.06452.pdf,2016,,,,
+,Bichromatic Hamming Close Pair,Bichromatic Hamming Close Pair,Support Vector Machines (SVM),Approximate Hard-Margin SVM,156,,,,,,SETH,"assume: SETH
+then: let $k(a,a')$ be the Gaussian kernel with $C=100\log n$ and let $\epsilon = \exp(-\omega(\log^2 n))$, then approximating the optimal value of target within multiplicative factor $1+\epsilon$ requires almost quadratic time.",2,"Backurs, A., Indyk, P., & Schmidt, L. (2017). On the fine-grained complexity of empirical risk minimization: Kernel methods and neural networks. Advances in Neural Information Processing Systems, 30.",https://proceedings.neurips.cc/paper/2017/file/635440afdfc39fe37995fed127d7df4f-Paper.pdf,2017,,,,
+,Clique,Max-Weight k-Clique,Geometric Covering Problems,Max-Weight Rectangle,157,,,,,,,"if: to-time: $O(N^{d-\epsilon})$ on $N$ weighted points in $d$ dimensions
+then: from-time: $O(n^{k-\epsilon})$ on $n$ vertices, where $k=\lceil d^2\epsilon^{-1}\rceil$",d,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,Graph Triangle Problems,Negative Triangle Detection,Maximum Subarray Problem,2D Maximum Subarray,158,,,,,,,"if: to-time: $O(n^{3-\epsilon})$ on $n\times n$ matrices
+then: from-time: $O(n^{3-\epsilon})$ on $n$ vertex graphs ",3,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,All-Pairs Shortest Paths (APSP),"Weighted, Undirected APSP",Maximum Subarray Problem,2D Maximum Subarray,159,,,,,,,"if: to-time: $O(n^{3-\epsilon})$ on $n\times n$ matrices
+then: from-time: $O(n^{3-\epsilon/10})$ on $n$ vertex graphs ",3,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,Clique,Max-Weight k-Clique,Maximum Subarray Problem,Maximum Subarray,160,,,,,,,"if: to-time: $O(n^{d+\lfloor d/2\rfloor-\epsilon})$ for $d$-dimensional hypercube arrays
+then: from-time: $O(n^{k-\epsilon})$ on $n$ vertex graphs for $k=d+\lfloor d/2\rfloor$ ",$d+\lfloor d/2\rfloor$,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,Clique,Max-Weight K-Clique,Maximum Subarray Problem,Maximum Square Subarray,161,,,,,,,"if: to-time: $O(n^{d+1-\epsilon})$ for $d$-dimensional hypercube arrays
+then: from-time: $O(n^{k-\epsilon})$ on $n$ vertex graphs for $k=d+1$ ",d+1,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,Clique,Max-Weight K-Clique,Geometric Covering Problems,Weighted Depth,162,,,,,,,"if: to-time: $O(n^{\lfloor d/2\rfloor-\epsilon})$ for $N$ weighted axis-parallel boxes in $\mathbb{R}^d$
+then: from-time: $O(n^{k-2\epsilon})$ on $n$ vertex graphs for $k=d$ ",$d+\lfloor d/2\rfloor$,"Backurs, Arturs, Nishanth Dikkala, and Christos Tzamos. ""Tight Hardness Results for Maximum Weight Rectangles}}."" 43rd International Colloquium on Automata, Languages, and Programming (ICALP 2016). Vol. 55. Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik, 2016.",https://arxiv.org/pdf/1602.05837.pdf,2016,,,,
+,Orthogonal Vectors,OV,Orthogonal Vectors,k-OV,163,Trivial - subproblem,,,,,k-OV,,2,,,,,,,
+,Orthogonal Vectors,3-OV,Orthogonal Vectors,k-OV,164,Trivial - subproblem,,,,,k-OV,,3,,,,,,,

@@ -19,4 +19,4 @@
 
 (DONE) 7. Make the Space Analysis Per Decade chart but with Percentages
 
-8. Histogram of the implied lower bound powers
+(DONE) 8. Histogram of the implied lower bound powers
