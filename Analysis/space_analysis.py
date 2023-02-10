@@ -8,7 +8,7 @@ import seaborn as sns
 from tabulate import tabulate
 from scipy import stats
 
-def no_tradeoff_necessary(family_name, variation):
+def no_tradeoff_necessary(family_name, variation, data):
     """
     Returns list of algorithm names if there are algorithms (among the algorithms that we have analyzed the space)
         for a problem variation that are both the fastest and most space efficient.
@@ -16,7 +16,7 @@ def no_tradeoff_necessary(family_name, variation):
 
     Prints this list as well.
     """
-    df = pd.read_csv('Analysis/data.csv')
+    df = data
     df = df.replace(np.nan, '', regex=True)
     algorithms = df.loc[df['Family Name'] == family_name]
     algorithms = algorithms.loc[algorithms['Variation'] == variation]
@@ -71,11 +71,13 @@ def no_tradeoff_necessary(family_name, variation):
 
     return best
 
-def fraction_of_optimality():
+def fraction_of_optimality(data=None):
     """
     Determine the fraction of variants that have an algorithm that is both
     faster and more space efficient (asymptotically) than the other algorithms
     """
+    if data is None:
+        data = pd.read_csv("Analysis/data.csv")
     total = 0
     has_optimal = 0
     families = helpers.get_families()
@@ -83,14 +85,15 @@ def fraction_of_optimality():
         variations = helpers.get_variations(family)
         for variation in variations:
             # total += 1
-            optimal_algs = no_tradeoff_necessary(family, variation)
+            optimal_algs = no_tradeoff_necessary(family, variation, data)
             if type(optimal_algs) != str:
                 total += 1
                 if len(optimal_algs) > 0:
                     has_optimal += 1
                     # print(family, variation, optimal_algs)
                 else:
-                    print(family, variation)
+                    # print(family, variation)
+                    continue
     return (total, has_optimal, has_optimal/total)
 
 def get_space_improvements_by_year(family_name, variation):
@@ -721,18 +724,17 @@ def heat_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
     index=["Doesn't Improve", "Improves"])
 
 
-    ax = sns.heatmap(graph_df, annot=True, cmap='Greens', linewidth=0.1, vmin=0, linecolor='gray')
+    ax = sns.heatmap(graph_df, annot=True, cmap='Greens', linewidth=0.1, vmin=0, linecolor='gray', cbar=False)
     plt.ylabel("Time Improvement?")
     plt.xlabel("Space Improvement?")
     plt.box(on=None)
-    plt.tick_params(axis='x', colors='#A6A6A6')
-    plt.tick_params(axis='y', colors='#A6A6A6', rotation=0)
+    plt.tick_params(axis='x', colors='black', labelsize=8)
+    plt.tick_params(axis='y', colors='black', rotation=0, labelsize=8)
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position('top')
 
     title = f"Proportion of {by_problem_or_algorithm}s that Improve (by {by_family_or_variation})"
     plt.title(title)
-
     plt.tight_layout()
 
     try:
@@ -1050,8 +1052,8 @@ def hist_space_analysis_per_decade(absolute_or_percent):
         percent_without = [without_ / total for (without_, total) in zip(not_analyzed_counts, total_per_year)]
         width = 2.25
         labels = ["1940s and earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
-        plt.bar([i*3 for i in range(len(labels))], percent_with, width, label="With Space Analysis")
         plt.bar([i*3 for i in range(len(labels))], percent_without, width, label="Without Space Analysis", bottom=percent_with)
+        plt.bar([i*3 for i in range(len(labels))], percent_with, width, label="With Space Analysis")
         for i in range(len(labels)):
             plt.annotate("{:.1%}".format(percent_with[i]), (i * 3, percent_with[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
             plt.annotate("{:.1%}".format(percent_without[i]), (i * 3, percent_with[i] + percent_without[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
@@ -1077,6 +1079,56 @@ def hist_space_analysis_per_decade(absolute_or_percent):
         plt.xticks(range(len(percent_with)), labels)
         print(f"\nThe percentage of papers with space analysis is increasing by {'{:.2f}'.format(res.slope * 100)} per decade\nwith an r-value of {'{:.4f}'.format(res.rvalue)} and a p-value of {'{:.4f}'.format(res.pvalue)} which is < 0.05,\nso we may reject the null hypothesis that the percentage doesn't change over time.\n")
         # plt.show()
+    return
+
+def hist_optimal_algos_per_decade():
+    """
+    Creates a 100% histogram, showing the % of problems with an optimal algo vs ones with space-time tradeoffs, per decade.
+    """
+    save_dest = "Analysis/Plots/Histograms/"
+
+    # Get the data first
+    df = pd.read_csv('Analysis/data_dirty.csv')
+    df = df.replace(np.nan, '', regex=True)
+    df.loc[df["Year"] < 1940] = 1940
+    percents_optimal = []
+    for decade_end in range(1950, 2030, 10):
+        decade_df = df[df["Year"] < decade_end]
+        percents_optimal.append(fraction_of_optimality(decade_df)[2])
+    percents_tradeoff = [1.0 - percent for percent in percents_optimal]
+    bins = range(1940, 2030, 10)
+
+    # Make the plot
+    plot_title = "Problems With Space-Time Tradeoffs Per Decade"
+    sns.set_theme()
+    plt.ylabel("Percent of Problems", fontsize=8)
+    width = 2.25
+    labels = ["1940s and earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
+    plt.bar([i*3 for i in range(len(labels))], percents_optimal, width, label="Problems with an Optimal Algorithm", bottom=percents_tradeoff)
+    plt.bar([i*3 for i in range(len(labels))], percents_tradeoff, width, label="Problems with Tradeoffs")
+    for i in range(len(labels)):
+        plt.annotate("{:.1%}".format(percents_tradeoff[i]), (i * 3, percents_tradeoff[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+        plt.annotate("{:.1%}".format(percents_optimal[i]), (i * 3, percents_tradeoff[i] + percents_optimal[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+    plt.xticks([i*3 for i in range(len(labels))], labels)
+    plt.xticks(fontsize=6)
+    plt.yticks(fontsize=6)
+    plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0))
+    plt.title(plot_title)
+    plt.legend(loc="upper right")
+    plt.tight_layout()
+
+    plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
+    plt.clf()
+    plt.close("all")
+
+    x = range(len(percents_tradeoff))
+    y = percents_tradeoff
+    res = stats.linregress(x, y)
+    plt.plot(x, y, 'o')
+    plt.plot(x, res.intercept + res.slope * x, 'r')
+    plt.xticks(range(len(percents_tradeoff)), labels)
+    print(f"\nThe percentage of problems with tradeoffs is increasing by {'{:.2f}'.format(res.slope * 100)} per decade\nwith an r-value of {'{:.4f}'.format(res.rvalue)} and a p-value of {'{:.4f}'.format(res.pvalue)} which is < 0.05,\nso we may reject the null hypothesis that the percentage doesn't change over time.\n")
+    # plt.show()
     return
 
 def hist_space_and_time_improvements_per_decade(by_family_or_variation):
@@ -1124,7 +1176,7 @@ def hist_space_and_time_improvements_per_decade(by_family_or_variation):
 
 helpers.clean_data()
 
-# print(fraction_of_optimality())
+hist_optimal_algos_per_decade()
 
 # print("\n-----------------------------\n")
 
@@ -1154,25 +1206,25 @@ heat_improvements_first_to_best("Space", "Variation")
 # heat_size_of_improvements("Family")
 # heat_size_of_improvements("Variation")
 
-# print("\n-----------------------------\n")
+print("\n-----------------------------\n")
 
-# heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
-# heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
-# heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
-# heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
+heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
+heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
+heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
+heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
 
-# print("\n-----------------------------\n")
+print("\n-----------------------------\n")
 
-# pie_best_space_comparative(0, "Family")
-# pie_best_space_comparative(0, "Variation")
-# pie_best_space_comparative(2, "Family")
-# pie_best_space_comparative(2, "Variation")
+pie_best_space_comparative(0, "Family")
+pie_best_space_comparative(0, "Variation")
+pie_best_space_comparative(2, "Family")
+pie_best_space_comparative(2, "Variation")
 
-# pie_best_space("Family")
-# pie_best_space("Variation")
+pie_best_space("Family")
+pie_best_space("Variation")
 
-# print("\n-----------------------------\n")
+print("\n-----------------------------\n")
 
-# hist_papers_per_decade()
-# hist_space_analysis_per_decade("Percent")
+hist_papers_per_decade()
+hist_space_analysis_per_decade("Percent")
 # hist_space_and_time_improvements_per_decade("Variation")
