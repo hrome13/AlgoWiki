@@ -575,7 +575,7 @@ def heat_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
     plt.close("all")
     return
 
-def pie_best_space(num_for_split, by_family_or_variation):
+def pie_best_space_comparative(num_for_split, by_family_or_variation):
     """
     0: Constant
     1: Log n
@@ -680,6 +680,83 @@ def pie_best_space(num_for_split, by_family_or_variation):
     plt.clf()
     plt.close("all")
     return [(sub_space, at_space, super_space), (sub_space / count, at_space / count, super_space / count)]
+
+def pie_best_space(by_family_or_variation):
+    """
+    Args:
+        by_family_or_variation: "Family" or "Variation"
+
+    Returns:
+        List of # of problems with best space algo in each of the classes
+    """
+
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    families = helpers.get_families()
+    counts = [0 for i in range(8)]
+
+    class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "Quasilinear", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
+
+    def get_best_space(algorithms):
+        """Get the best space complexity from the input algorithms (e.g. from a family or variation)"""
+        best_space = 8
+        for index, row in algorithms.iterrows():
+            item = {}
+            item['year'] = int(row['Year'])
+            spaces = row['Space Complexity Class'].split(',\n')
+            for dependency in spaces:
+                dependency_list = dependency.split(': ')
+                if dependency_list[0] == 'n' or dependency_list[0] == 'V': # TODO: maybe add a column of "preferred parameter" in the data
+                    item['space'] = math.ceil(float(dependency_list[1]) - 1) # TODO: CEIL THIS (ROUND UP)
+            item['space'] = item.get('space', 0)
+            item['name'] = row['Algorithm Name']
+
+            if item['space'] < best_space:
+                best_space = item['space']
+
+        return best_space
+
+    if by_family_or_variation == "Variation":
+        print(f"\nProblem variations with best-space")
+    else:
+        print(f"\nProblem families with best-space")
+
+    for family_name in families:
+        vars = helpers.get_variations(family_name)
+        algorithms = df.loc[df['Family Name'] == family_name]
+        if by_family_or_variation == "Variation":   
+            for variation in vars:
+                var_algorithms = algorithms.loc[algorithms['Variation'] == variation]
+                if var_algorithms.empty:
+                    print('No data found for family name: ' +
+                        family_name + ' and variation: ' + variation)
+                    continue
+                best_space = get_best_space(var_algorithms)
+                counts[best_space] += 1
+        else:
+            if algorithms.empty:
+                print('No data found for family name: ' +
+                    family_name)
+                continue
+            best_space = get_best_space(algorithms)
+            counts[best_space] += 1
+                
+    print(f"\nNumbers of {by_family_or_variation}:")
+    for i in range(len(class_string)):
+        print(f"{class_string[i]}: {counts[i]}, ({'{:.2f}'.format(counts[i] / sum(counts) * 100)}%)")
+    print()
+
+    labels = [class_string[i] for i in range(len(class_string))]
+    sns.set_palette("Reds", len(class_string))
+    plt.figure(figsize=(18, 9))
+    patches, texts, autotexts = plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=90, counterclock=False)
+    plt.title(f"Problems' Best Auxiliary Space Complexity")
+    save_dest = "Analysis/Plots/Best Space Algos/"
+    plt.tight_layout()
+    plt.savefig(f"{save_dest}Best Space Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
+    plt.clf()
+    plt.close("all")
+    return counts
 
 def hist_papers_per_decade():
     """
@@ -911,13 +988,16 @@ helpers.clean_data()
 
 # print("\n-----------------------------\n")
 
-# pie_best_space(0, "Family")
-# pie_best_space(0, "Variation")
-# pie_best_space(2, "Family")
-# pie_best_space(2, "Variation")
+# pie_best_space_comparative(0, "Family")
+# pie_best_space_comparative(0, "Variation")
+# pie_best_space_comparative(2, "Family")
+# pie_best_space_comparative(2, "Variation")
+
+pie_best_space("Family")
+pie_best_space("Variation")
 
 # print("\n-----------------------------\n")
 
 # hist_papers_per_decade()
-hist_space_analysis_per_decade("Percent")
+# hist_space_analysis_per_decade("Percent")
 # hist_space_and_time_improvements_per_decade("Variation")
