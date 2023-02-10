@@ -5,17 +5,17 @@
 2. Create new heatmap showing only the jumps from first algorithm to best algorithm
 
 3. For the Pareto graphs
-    - denote parallel/quantum algorithms differently
-    - Draw the frontier with a line
+    - Draw the frontier with a line ?
 
 4. Create a 100% histogram showing parcentage of problems with an optimal algorithm over time
     - See ipad drawing (% with tradeoff, % with optimal)
 
-5. Make the Pareto examples pretty
+(DONE) 5. Make the Pareto examples pretty
     - Clean up titles and years
+    - denote parallel/quantum algorithms differently
 
-6. Pie charts
-    - Recreate the pie charts from Emily's paper but with space
+(DONE) 6. Pie charts
+    - Recreate the pie charts from Emily's paper but with space (EXCEL)
 
 (DONE) 7. Make the Space Analysis Per Decade chart but with Percentages
 

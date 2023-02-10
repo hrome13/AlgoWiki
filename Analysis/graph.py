@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import numpy as np
 import helpers
+import seaborn as sns
 
 
 def generate_graph(family_name, variation, type):
@@ -17,6 +18,7 @@ def generate_graph(family_name, variation, type):
     dataframe = dataframe.replace(np.nan, '', regex=True)
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
     algorithms = algorithms.loc[algorithms['Variation'] == variation]
+    sns.set_theme()
     
     if algorithms.empty:
         print('No data found for family name: ' +
@@ -249,6 +251,8 @@ def generate_graph(family_name, variation, type):
                 dependency_list = dependency.split(': ')
                 if dependency_list[0] == 'n' or dependency_list[0] == 'V':
                     item['space'] = math.ceil(float(dependency_list[1]) - 1) # math.ceil(float(dependency_list[1]) - 1)
+            item['quantum?'] = row['Quantum?'] == "1"
+            item['parallel?'] = row['Parallel?'] == "1"
             item['space'] = item.get('space', 0)
             item['name'] = row['Algorithm Name']
             item['time'] = math.ceil(float(row['Time Complexity Class']) - 1)
@@ -291,10 +295,15 @@ def generate_graph(family_name, variation, type):
             times = []
             names = []
             years = []
+            parallels = []
+            quantums = []
             prev_decades = decades.keys()
+
             for time in frontier_algs:
                 alg = frontier_algs[time][0]
-                skip = False
+                skip = False # turns to True if it improves the Pareto frontier
+
+                # Compare algo to previous Pareto frontier
                 for x in prev_decades:
                     if decades[x][0]:
                         for prev_sp, prev_ti in zip(decades[x][0], decades[x][1]):
@@ -303,29 +312,58 @@ def generate_graph(family_name, variation, type):
                                 break
                         if skip:
                             break
+
+                # If the algo improves the Pareto frontier, add it to the lists
                 if not skip:
+                    parallels.append(alg['parallel?'])
+                    quantums.append(alg['quantum?'])
                     spaces.append(alg['space'])
                     times.append(alg['time'])
                     names.append(alg['name'])
                     years.append(alg['year'])
 
-            decades[decade] = (spaces, times, names, years)
+            decades[decade] = (spaces, times, names, years, parallels, quantums)
 
-        # color = iter(cm.rainbow(np.linspace(0, 1, len(decades))))
+        colors = sns.color_palette("Reds", n_colors=len(decades))
         decades_list = [x for x in decades]
         decades_list.sort()
         points_plotted = 0
+        colors_idx = len(decades) - 1
         for decade in decades_list[::-1]:
             label = str(decade) + '\'s'
-            spaces, times, names, years = decades[decade]
+            spaces, times, names, years, parallels, quantums = decades[decade]
             if spaces and times:
-                # c = next(color)
+                color = colors[colors_idx]
                 # plt.step(spaces, times, label=label, where='post', linewidth=5, c=c)
+                # plt.plot(spaces, times, 'o', markersize=14, label=label)
+
+                spaces = np.array(spaces)
+                times = np.array(times)
+                parallels = np.array(parallels)
+                quantums = np.array(quantums)
+
+                # Plot the quantum algos
+                if sum(quantums) > 0:
+                    plt.plot(spaces[quantums == True], times[quantums == True], 'X', markersize=14, label=label+" (Quantum)", color=color)
+
+                # Plot the parallel algos
+                if sum(parallels) > 0:
+                    plt.plot(spaces[parallels == True], times[parallels == True], 'P', markersize=14, label=label+" (Parallel)", color=color)
+
+                # Plot the rest
+                if len(spaces[(parallels == False) & (quantums == False)]) > 0:
+                    plt.plot(spaces[(parallels == False) & (quantums == False)],
+                            times[(parallels == False) & (quantums == False)],
+                            'o', markersize=14, label=label, color=color)
+                
                 points_plotted += len(names)
-                plt.plot(spaces, times, 'o', markersize=14, label=label)
+
+                # Annotate the algos
                 for i in range(len(names)):
                     plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
                                 xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=0)#10)
+                
+            colors_idx -= 1
         plt.legend(prop={'size': 24})
         plt.xlabel("Space Complexity", fontsize=20)
         plt.ylabel("Time Complexity", fontsize=20)
@@ -333,7 +371,6 @@ def generate_graph(family_name, variation, type):
             save_dest = "Analysis/Plots/Pareto Decades/Improvements/"
         else:
             save_dest = "Analysis/Plots/Pareto Decades/No Improvements/"
-        # save_dest = "Analysis/Plots/Pareto Decades/"
         title_suffix = "Pareto Frontier"
 
 
@@ -350,11 +387,15 @@ def generate_graph(family_name, variation, type):
     plt.tick_params(axis='x',   which='both',   bottom=False,
                     top=False, labelbottom=True)
 
-    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
-                                          'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
+    # plt.yticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
+    #                                       'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
+    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7], ('Constant', 'Logarithmic', 'Linear',
+                                          'Quasilinear', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), weight='bold', fontsize=14)
     if type == 'both_tradeoffs' or type == 'pareto_decades':
-        plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
-                                          'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
+        # plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
+        #                                   'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
+        plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ('Constant', 'Logarithmic', 'Linear',
+                                          'Quasilinear', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), weight='bold', fontsize=14)
         plt.grid(axis='both', color='#E8E8E8')
     else:
         plt.xticks(weight='bold', fontsize=14)
@@ -369,14 +410,19 @@ def generate_graph(family_name, variation, type):
     plt.clf()
     plt.close("all")
 
+
+helpers.clean_data()
+
 # family = 'Maximum Subarray Problem'
 # variation = '1D Maximum Subarray'
 # family = 'Optimal Binary Search Trees'
-# variation = 'OBST'
+# variation = 'Approximate OBST'
 # family = 'Sorting'
 # variation = 'Non-Comparison Sorting'
 # family = 'Sorting'
 # variation = 'Comparison Sorting'
+# family = "De Novo Genome Assembly"
+# variation = "De Novo Genome Assembly"
 
 # generate_graph(family, variation, 'space')
 # generate_graph(family, variation, 'time')
@@ -384,7 +430,6 @@ def generate_graph(family_name, variation, type):
 # generate_graph(family, variation, 'both_tradeoffs')
 # generate_graph(family, variation, 'pareto_decades')
 
-helpers.clean_data()
 families = helpers.get_families()
 for fam in families:
     for var in helpers.get_variations(fam):
