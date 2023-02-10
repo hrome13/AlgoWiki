@@ -21,3 +21,5 @@ ipython_config.py
 __pycache__/
 
 data.csv
+reductions_data.csv
+data_dirty.csv
