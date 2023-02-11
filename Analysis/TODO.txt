@@ -7,7 +7,7 @@
 3. For the Pareto graphs
     - Draw the frontier with a line ?
 
-(DONE) 4. Create a 100% histogram showing parcentage of problems with an optimal algorithm over time
+(DONE) 4. Create a 100% histogram showing percentage of problems with an optimal algorithm over time
     - See ipad drawing (% with tradeoff, % with optimal)
 
 (DONE) 5. Make the Pareto examples pretty
@@ -26,3 +26,30 @@
 10. Fix heat_size_of_improvements()
 
 11. Fix hist_space_and_time_improvements_per_decade()
+
+(DONE) 12. try a version of the pareto examples where you:
+    - drop the parallel implementations
+    -drop the decade coloring and legend
+    -put arrows going from chronologically first to second, second to third, etc.
+
+(DONE) 13. On all versions with a legend, switch 2010’s to 2010s, 2000’s to 2000s, etc.
+
+(DONE?) 14. On versions put “Space Complexity (Augmented)”  @Jayson Lynch: please advise if another label would be better
+
+(DONE) 15. On space analysis per decade:
+    -drop decimal places and drop bolding from bar labels
+    -use colors in line with charts from time complexity paper
+    -cut off y-axis at 100%
+    -change title to Percentage of algorithm papers with space complexity analysis (and drop y-axis title)
+    -move legend off the bars
+    -get the various font sizes more similar
+
+(DONE) 16. For Problems with Space-Time…
+    -same changes from other histogram, plus…
+    -change title to: Time complexity – space complexity tradeoffs
+    -change legend categories to “Single algorithm optimal” and “Time-space tradeoff”
+    -is what is shown the flow of new algorithms or the stock of all existing?
+
+(DONE) 17. For Proportion of Algorithms that Improve…
+    -Try changing to a pie chart, using same colors as lower bounds paper
+    -List as percentages

@@ -281,7 +281,8 @@ def get_time_improvements_first_to_best(family_name, variation):
         if item['time'] < best_time:
             best_time = item['time']
         improvements = [[first_time, best_time]]
-
+    if improvements == [[7, 1]]:
+        print(family_name, variation)
     return improvements
 
 def get_space_improvements_first_to_best(family_name, variation):
@@ -445,10 +446,14 @@ def heat_improvements_by_type(time_or_space, by_family_or_variation):
 
     # Create the plot
     sns.set_theme()
-    ax = sns.heatmap(df2, annot=True, cmap='Greens', linewidth=0.3, vmin=0, linecolor='gray', cbar=False)
+    ax = sns.heatmap(df2, annot=True, cmap='Reds', linewidth=0.3, vmin=0, linecolor='gray', cbar=False)
     plt.box(on=None)
-    plt.xlabel(f"{time_or_space} Complexity Post-Improvement")
-    plt.ylabel(f"{time_or_space} Complexity Pre-Improvement")
+    complexity_label = f" {time_or_space} Complexity"
+    if time_or_space == "Space":
+        complexity_label = f"\n{complexity_label[1:]}"
+        complexity_label += " (Augmented)"
+    plt.xlabel(f"Post-Improvement{complexity_label}")
+    plt.ylabel(f"Pre-Improvement{complexity_label}")
     plt.tick_params(axis='x', colors='black', labelsize=8)
     plt.tick_params(axis='y', colors='black', labelsize=8)
     ax.xaxis.tick_top()
@@ -521,12 +526,15 @@ def heat_improvements_first_to_best(time_or_space, by_family_or_variation):
 
     # Create the plot
     sns.set_theme()
-    ax = sns.heatmap(df2, annot=True, cmap='Greens', linewidth=0.3, vmin=0, linecolor='gray', cbar=False)
+    ax = sns.heatmap(df2, annot=True, cmap='Reds', linewidth=0.3, vmin=0, linecolor='gray', cbar=False)
     plt.box(on=None)
     plt.tick_params(axis='x', colors='black', labelsize=8)
     plt.tick_params(axis='y', colors='black', labelsize=8)
-    plt.xlabel(f"Best {time_or_space} Complexity")
-    plt.ylabel(f"First {time_or_space} Complexity")
+    complexity_label = f"{time_or_space} Complexity"
+    if time_or_space == "Space":
+        complexity_label += " (Augmented)"
+    plt.xlabel(f"Best {complexity_label}")
+    plt.ylabel(f"First {complexity_label}")
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position('top') 
     ax.invert_xaxis()
@@ -568,10 +576,10 @@ def heat_size_of_improvements(by_family_or_variation):
             time_df = pd.concat([time_df, time_var_df], ignore_index=True)
     
     # Create df cross tabulation for the heatmap
-    space_df['Space Improvements'] = space_df['Pre-Improvement'] - space_df['Post-Improvement']
+    space_df['Space Improvements (Augmented)'] = space_df['Pre-Improvement'] - space_df['Post-Improvement']
     time_df['Time Improvements'] = time_df['Pre-Improvement'] - time_df['Post-Improvement']
 
-    df2 = pd.concat([time_df['Time Improvements'].value_counts(), space_df['Space Improvements'].value_counts()], axis=1)
+    df2 = pd.concat([time_df['Time Improvements'].value_counts(), space_df['Space Improvements (Augmented)'].value_counts()], axis=1)
     for i in range(1,8):
         if i not in df2.index:
             df2.loc[i] = pd.Series(0, index=df2.columns)
@@ -726,7 +734,7 @@ def heat_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
 
     ax = sns.heatmap(graph_df, annot=True, cmap='Greens', linewidth=0.1, vmin=0, linecolor='gray', cbar=False)
     plt.ylabel("Time Improvement?")
-    plt.xlabel("Space Improvement?")
+    plt.xlabel("Space Improvement? (Augmented)")
     plt.box(on=None)
     plt.tick_params(axis='x', colors='black', labelsize=8)
     plt.tick_params(axis='y', colors='black', rotation=0, labelsize=8)
@@ -846,7 +854,7 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation):
     sns.set_palette("Reds", 3)
     plt.figure(figsize=(18, 9))
     plt.pie(data, labels=labels, autopct='%1.1f%%', explode=explode)
-    plt.title(f"Problems' Best Space Complexity Compared to {class_string[num_for_split]} Space")
+    plt.title(f"Problems' Best Space Complexity (Augmented) Compared to {class_string[num_for_split]} Space")
     save_dest = "Analysis/Plots/Best Space Algos/"
     plt.savefig(f"{save_dest}{class_string[num_for_split]} Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
     plt.clf()
@@ -974,7 +982,6 @@ def hist_space_analysis_per_decade(absolute_or_percent):
         absolute_or_percent: string "Absolute" or "Percent"
     """
 
-
     save_dest = "Analysis/Plots/Histograms/"
 
     # Get the data first
@@ -1025,18 +1032,17 @@ def hist_space_analysis_per_decade(absolute_or_percent):
     plt.clf()
     plt.close("all")
 
-    # Putting the two side-by-side
-    plot_title = "Space Analysis Per Decade"
+    # Putting the two together
     if absolute_or_percent == "Absolute":
+        plot_title = "Number of Algorithm Papers with Space Complexity Analysis"
         save_title = plot_title + " (Absolutes)"
     elif absolute_or_percent == "Percent":
+        plot_title = "Percentage of Algorithm Papers with Space Complexity Analysis"
         save_title = plot_title + " (Percents)"
-    
-    # plt.xlabel("Decade Published", fontsize=6)
     
     sns.set_theme()
     if absolute_or_percent == "Absolute":
-        plt.ylabel("Number of Papers", fontsize=8)
+        # plt.ylabel("Number of Papers", fontsize=8)
         counts, bins, patches = plt.hist([analyzed_years, not_analyzed_years], bins=bins,
                                         label=["With Space Analysis", "Without Space Analysis"],
                                         histtype="bar")
@@ -1046,24 +1052,26 @@ def hist_space_analysis_per_decade(absolute_or_percent):
         for with_bar, without_bar, b0, b1 in zip(with_space, without_space, bins[:-1], bins[1:]):
             print(f'{b0:3d} - {b1:3d}: {with_bar:4.0f} {without_bar:4.0f}')
     elif absolute_or_percent == "Percent":
-        plt.ylabel("Percent of Papers", fontsize=8)
+        # plt.ylabel("Percent of Papers", fontsize=8)
         total_per_year = [with_ + without_ for (with_, without_) in zip(analyzed_counts, not_analyzed_counts)]
         percent_with = [with_ / total for (with_, total) in zip(analyzed_counts, total_per_year)]
         percent_without = [without_ / total for (without_, total) in zip(not_analyzed_counts, total_per_year)]
         width = 2.25
-        labels = ["1940s and earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
-        plt.bar([i*3 for i in range(len(labels))], percent_without, width, label="Without Space Analysis", bottom=percent_with)
-        plt.bar([i*3 for i in range(len(labels))], percent_with, width, label="With Space Analysis")
+        labels = ["1940s\nand earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
+        plt.bar([i*3 for i in range(len(labels))], percent_with, width, label="With space analysis", color="#C81C1C") # #C81C1C, #1B83A0, #00BCA0
+        plt.bar([i*3 for i in range(len(labels))], percent_without, width, label="Without space analysis", bottom=percent_with, color="#1B83A0")
         for i in range(len(labels)):
-            plt.annotate("{:.1%}".format(percent_with[i]), (i * 3, percent_with[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
-            plt.annotate("{:.1%}".format(percent_without[i]), (i * 3, percent_with[i] + percent_without[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+            plt.annotate("{:.0%}".format(percent_with[i]), (i * 3, percent_with[i] / 2), fontsize=8, ha="center", va="center", color="white")
+            plt.annotate("{:.0%}".format(percent_without[i]), (i * 3, percent_with[i] + percent_without[i] / 2), fontsize=8, ha="center", va="center", color="white")
         plt.xticks([i*3 for i in range(len(labels))], labels)
-        plt.xticks(fontsize=6)
-        plt.yticks(fontsize=6)
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+        plt.ylim((0, 1))
         plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0))
 
     plt.title(plot_title)
-    plt.legend(loc="upper right")
+    # plt.legend(loc="upper right")
+    plt.legend(loc="lower center", bbox_to_anchor=(0.2, -0.2, 0.6, 0.2), mode="expand", ncol=2, fontsize=8)
     plt.tight_layout()
 
     plt.savefig(save_dest + save_title + ".png", dpi=300, bbox_inches="tight")
@@ -1099,22 +1107,24 @@ def hist_optimal_algos_per_decade():
     bins = range(1940, 2030, 10)
 
     # Make the plot
-    plot_title = "Problems With Space-Time Tradeoffs Per Decade"
+    plot_title = "Time Complexity - Space Complexity Tradeoffs"
     sns.set_theme()
     plt.ylabel("Percent of Problems", fontsize=8)
     width = 2.25
-    labels = ["1940s and earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
-    plt.bar([i*3 for i in range(len(labels))], percents_optimal, width, label="Problems with an Optimal Algorithm", bottom=percents_tradeoff)
-    plt.bar([i*3 for i in range(len(labels))], percents_tradeoff, width, label="Problems with Tradeoffs")
+    labels = ["1940s\nand earlier", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s"]
+    plt.bar([i*3 for i in range(len(labels))], percents_tradeoff, width, label="Time-space tradeoff", color="#C81C1C") # #C81C1C, #1B83A0, #00BCA0
+    plt.bar([i*3 for i in range(len(labels))], percents_optimal, width, label="Single algorithm optimal", bottom=percents_tradeoff, color="#1B83A0")
     for i in range(len(labels)):
-        plt.annotate("{:.1%}".format(percents_tradeoff[i]), (i * 3, percents_tradeoff[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
-        plt.annotate("{:.1%}".format(percents_optimal[i]), (i * 3, percents_tradeoff[i] + percents_optimal[i] / 2), fontsize=8, ha="center", va="center", fontweight="bold", color="white")
+        plt.annotate("{:.1%}".format(percents_tradeoff[i]), (i * 3, percents_tradeoff[i] / 2), fontsize=8, ha="center", va="center", color="white")
+        plt.annotate("{:.1%}".format(percents_optimal[i]), (i * 3, percents_tradeoff[i] + percents_optimal[i] / 2), fontsize=8, ha="center", va="center", color="white")
     plt.xticks([i*3 for i in range(len(labels))], labels)
-    plt.xticks(fontsize=6)
-    plt.yticks(fontsize=6)
+    plt.xticks(fontsize=8)
+    plt.yticks(fontsize=8)
+    plt.ylim((0, 1))
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0))
     plt.title(plot_title)
-    plt.legend(loc="upper right")
+    # plt.legend(loc="upper right")
+    plt.legend(loc="lower center", bbox_to_anchor=(0.2, -0.2, 0.6, 0.2), mode="expand", ncol=2, fontsize=8)
     plt.tight_layout()
 
     plt.savefig(save_dest + plot_title + ".png", dpi=300, bbox_inches="tight")
@@ -1154,7 +1164,7 @@ def hist_space_and_time_improvements_per_decade(by_family_or_variation):
     bins = range(1940, 2030, 10)
     sns.set_theme()
     counts, bins, patches = plt.hist([time_improvements, space_improvements], bins=bins,
-                                    label=["Time Improvements", "Space Improvements"],
+                                    label=["Time Improvements", "Space Improvements (Augmented)"],
                                     histtype="bar")
 
     time, space = counts
@@ -1176,7 +1186,7 @@ def hist_space_and_time_improvements_per_decade(by_family_or_variation):
 
 helpers.clean_data()
 
-hist_optimal_algos_per_decade()
+# hist_optimal_algos_per_decade()
 
 # print("\n-----------------------------\n")
 
@@ -1189,7 +1199,7 @@ hist_optimal_algos_per_decade()
 # hist_improvements("Year", "Space", "Family")
 # hist_improvements("Year", "Space", "Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
 heat_improvements_by_type("Time", "Family")
 heat_improvements_by_type("Time", "Variation")
@@ -1206,25 +1216,25 @@ heat_improvements_first_to_best("Space", "Variation")
 # heat_size_of_improvements("Family")
 # heat_size_of_improvements("Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
-heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
-heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
-heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
+# heat_2x2_time_space_improvements("Algorithm", "Family", include_first_algo=True)
+# heat_2x2_time_space_improvements("Algorithm", "Variation", include_first_algo=True)
+# heat_2x2_time_space_improvements("Problem", "Family", include_first_algo=True)
+# heat_2x2_time_space_improvements("Problem", "Variation", include_first_algo=True)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-pie_best_space_comparative(0, "Family")
-pie_best_space_comparative(0, "Variation")
-pie_best_space_comparative(2, "Family")
-pie_best_space_comparative(2, "Variation")
+# pie_best_space_comparative(0, "Family")
+# pie_best_space_comparative(0, "Variation")
+# pie_best_space_comparative(2, "Family")
+# pie_best_space_comparative(2, "Variation")
 
-pie_best_space("Family")
-pie_best_space("Variation")
+# pie_best_space("Family")
+# pie_best_space("Variation")
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-hist_papers_per_decade()
-hist_space_analysis_per_decade("Percent")
+# hist_papers_per_decade()
+# hist_space_analysis_per_decade("Percent")
 # hist_space_and_time_improvements_per_decade("Variation")
