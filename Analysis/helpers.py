@@ -20,13 +20,15 @@ def clean_data():
     """
     dataframe = pd.read_csv('Analysis/data_dirty.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
-    dataframe = dataframe[dataframe["Time Complexity Class"] != '']
-    dataframe = dataframe[(dataframe['Time Complexity Class'] != '') & (dataframe["Looked at?"] != 0.001) & (dataframe["Exact Problem Statement?"] == 1)]
-    # dataframe = dataframe[dataframe["Looked at?"] != "0.001"]
-    # print(dataframe[dataframe['Exact Problem Statement?'] == 1])
-    # print(dataframe[dataframe["Looked at?"] == 0.001])
-    # return
-    dataframe = dataframe[dataframe["Exact Problem Statement?"] != "0"]
+    dataframe = dataframe[(dataframe['Time Complexity Class'] != '') &
+                          (dataframe["Looked at?"] != 0.001) &
+                          (dataframe["Exact Problem Statement?"] == 1)]
+
+    # Get rid of parallel, quantum, and approximate algorithms
+    dataframe = dataframe[(dataframe["Quantum?"] == 0) | (dataframe["Quantum?"] == "0")]
+    dataframe = dataframe[(dataframe["Parallel?"] == 0) | (dataframe["Parallel?"] == "0")]
+    dataframe = dataframe[(dataframe["Approximate?"] == 0) | (dataframe["Approximate?"] == "0")]
+
     searching = True
     found = False
     while searching:
@@ -68,3 +70,7 @@ def get_families():
 #     print(fam + ": ")
 #     print(get_variations(fam).tolist())
 clean_data()
+
+# df = pd.read_csv("Analysis/data_dirty.csv")
+# cleaned = pd.read_csv("Analysis/data.csv")
+# print(df["Family Name"].unique() - cleaned["Family Name"].unique())

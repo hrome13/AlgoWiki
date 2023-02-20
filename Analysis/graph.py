@@ -18,20 +18,33 @@ def generate_graph(family_name, variation, type):
     dataframe = dataframe.replace(np.nan, '', regex=True)
 
     # Get the algorithms for the specific family/variation
-    algorithms = dataframe.loc[dataframe['Family Name'] == family_name]
-    if variation != "by family":
-        algorithms = algorithms.loc[algorithms['Variation'] == variation]
+    algorithms = dataframe.loc[dataframe['Family Name'] == family_name].sort_values("Year")
 
-    # Drop the parallel implementations
-    algorithms = algorithms[algorithms['Parallel?'] == '0']
+
+    if variation != "By Family":
+        # Set the starting algo for the variation as the first algo for the family (typically the naive algo)
+        algorithms.loc[:, "Starting Time"] = algorithms["Time Complexity Class"].iloc[0]
+        algorithms.loc[:, "Starting Year"] = algorithms["Year"].iloc[0]
+        algorithms.loc[:, "Starting Name"] = algorithms["Algorithm Name"].iloc[0]
+        row = algorithms.iloc[0]
+        spaces = row['Space Complexity Class'].split(',\n')
+        starting_space = 0
+        for dependency in spaces:
+            dependency_list = dependency.split(': ')
+            if dependency_list[0] == 'n' or dependency_list[0] == 'V':
+                starting_space = float(dependency_list[1]) - 1
+        algorithms.loc[:, "Starting Space"] = starting_space
+
+        # Filter by variation name
+        algorithms = algorithms.loc[algorithms['Variation'] == variation]
 
     sns.set_theme()
     
+    # Check that the problem (+ variation) has data
     if algorithms.empty:
         print('No data found for family name: ' +
               family_name + ' and variation: ' + variation)
         return False
-
     if type == 'time':
         algorithms = algorithms[algorithms['Time Complexity Class']!=''].sort_values('Year')
         if algorithms.empty:
@@ -94,30 +107,36 @@ def generate_graph(family_name, variation, type):
 
     # Create time bound improvement step plots
     if type == 'time':
-        save_dest = 'Analysis/Plots/Time Improvements/'
+        if variation == "By Family":
+            save_dest = "Analysis/Plots/Time Improvements/By Family/"
+        else:
+            save_dest = "Analysis/Plots/Time Improvements/By Variation/"
 
         # Get the algorithms that improve the time bounds
         improvements = []
-        best_time = 8
-        start_time = None
+        best_time = None
         improves = False
         algorithms = algorithms.sort_values('Year')
         for index, row in algorithms.iterrows():
-            if not start_time:
-                start_time = 8 - int(row['Starting Complexity'])
-                best_time = start_time
-                item = {'year': 1940, 'time': start_time, 'name': ''}
-                improvements.append(item)
-            item = {}
-            item['year'] = int(row['Year'])
-            item['time'] = float(row['Time Complexity Class']) - 1 # math.ceil()
-            item['name'] = row['Algorithm Name']
 
-            # See if this alg improves the time bound
-            if item['time'] < best_time:
+            # Add the first algo for the problem family as the starting point for the variation
+            # if best_time is None and var != "By Family":
+            #     if row["Starting Year"] != row["Year"] or row["Starting Name"] != row["Algorithm Name"] or row["Starting Time"] != row["Time Complexity Class"]:
+            #         item = {'year': int(row["Starting Year"]), 'time': float(row["Starting Time"]) - 1, 'name': row["Starting Name"]}
+            #         best_time = item["time"]
+            #         improvements.append(item)
+            
+            item = {'year': int(row["Year"]), 'time': float(row["Time Complexity Class"]) - 1, 'name': row["Algorithm Name"]}
+
+            # See if this algo improves the time bound
+            if best_time is None:
                 improvements.append(item)
                 best_time = item['time']
-                improves = True
+            else:
+                if item['time'] < best_time:
+                    improvements.append(item)
+                    best_time = item['time']
+                    improves = True
 
         if improves:
             save_dest += "Improvements/"
@@ -137,21 +156,35 @@ def generate_graph(family_name, variation, type):
         # Plot and annotate the algs that improve space bounds
         plt.step(time_years, time_class, where='post', color="#822600",
                  linewidth=5, solid_capstyle='round')
-        plt.plot(time_years[1:-1], time_class[1:-1], 'o', color='#C71F1D', markersize=14)
-        for i in range(1, len(time_labels) - 1):
+        plt.plot(time_years[:-1], time_class[:-1], 'o', color='#C71F1D', markersize=14)
+        # plt.annotate(time_labels[0].split(';')[-1], xy=(time_years[0], time_class[0]),
+        #              xytext=(time_years[0] + 1, time_class[0] + 0.15), color="brown", fontsize=12, weight='bold')
+        for i in range(0, len(time_labels) - 1):
             plt.annotate(time_labels[i].split(';')[-1] + ', ' + str(time_years[i]), xy=(time_years[i], time_class[i]),
-                        xytext=(time_years[i] + 1, time_class[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=45)
+                        xytext=(time_years[i] + 1, time_class[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold')# , rotation=45)
         title_suffix = 'Time'
 
     # Create space bound improvement step plots
     elif type == 'space':
-        save_dest = 'Analysis/Plots/Space Improvements/'
+        if variation == "By Family":
+            save_dest = "Analysis/Plots/Space Improvements/By Family/"
+        else:
+            save_dest = "Analysis/Plots/Space Improvements/By Variation/"
 
         # Get the algorithms that improve the space bounds
         improvements = []
-        best_space = 8
+        best_space = None
+        improves = False
         algorithms = algorithms.sort_values('Year')
         for index, row in algorithms.iterrows():
+
+            # Add the first algo for the problem family as the starting point for the variation
+            # if best_space is None and var != "By Family":
+            #     if row["Starting Year"] != row["Year"] or row["Starting Name"] != row["Algorithm Name"] or row["Starting Time"] != row["Time Complexity Class"]:
+            #         item = {'year': int(row["Starting Year"]), 'space': float(row["Starting Space"]) - 1, 'name': row["Starting Name"]}
+            #         best_space = item["space"]
+            #         improvements.append(item)
+
             item = {}
             item['year'] = int(row['Year'])
             spaces = row['Space Complexity Class'].split(',\n')
@@ -160,16 +193,20 @@ def generate_graph(family_name, variation, type):
             for dependency in spaces:
                 dependency_list = dependency.split(': ')
                 if dependency_list[0] == 'n' or dependency_list[0] == 'V':
-                    item['space'] = float(dependency_list[1]) - 1 # math.ceil(float(dependency_list[1]) - 1)
+                    item['space'] = float(dependency_list[1]) - 1
             item['space'] = item.get('space', 0)
             item['name'] = row['Algorithm Name']
 
-            # See if this alg improves the space bound
-            if item['space'] < best_space:
+            # See if this algo improves the space bound
+            if best_space is None:
                 improvements.append(item)
                 best_space = item['space']
+            else:
+                if item['space'] < best_space:
+                    improvements.append(item)
+                    best_space = item['space']
+                    improves = True
 
-        improves = len(improvements) > 1
         if improves:
             save_dest += "Improvements/"
         else:
@@ -189,9 +226,11 @@ def generate_graph(family_name, variation, type):
         plt.step(space_years, space_class, where='post', color="#822600",
                  linewidth=5, solid_capstyle='round')
         plt.plot(space_years[:-1], space_class[:-1], 'o', color='#C71F1D', markersize=14)
+        # plt.annotate(space_labels[0].split(';')[-1], xy=(space_years[0], space_class[0]),
+        #              xytext=(space_years[0] + 1, space_class[0] + 0.15), color="brown", fontsize=12, weight='bold')
         for i in range(0, len(space_labels) - 1):
             plt.annotate(space_labels[i].split(';')[-1] + ', ' + str(space_years[i]), xy=(space_years[i], space_class[i]),
-                        xytext=(space_years[i] + 1, space_class[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=45)
+                        xytext=(space_years[i] + 1, space_class[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold') #, rotation=45)
         title_suffix = 'Space'
 
     # Create scatterplot showing space vs time for the algos that improve the time upper bounds
@@ -216,7 +255,7 @@ def generate_graph(family_name, variation, type):
     # Create scatterplot showing space vs time for all of the algos
     elif type == 'both_tradeoffs':
         plt.plot(upper_space, upper_time, 'o', color='#C71F1D', markersize=14)
-        plt.xlabel('Space Complexity (Augmented)')
+        plt.xlabel('Space Complexity (Auxiliary)')
         plt.ylabel('Time Complexity')
         # for i in range(1, len(upper_x) - 1):
         #     plt.annotate(upper_bound[i]['name'].split(';')[-1] + ', ' + str(upper_bound[i]['year']), xy=(upper_space[i], upper_time[i]),
@@ -243,7 +282,7 @@ def generate_graph(family_name, variation, type):
             item['parallel?'] = row['Parallel?'] == 1 or row['Parallel?'] == "1"
             item['space'] = item.get('space', 0)
             item['name'] = row['Algorithm Name']
-            item['time'] = math.ceil(float(row['Time Complexity Class']) - 1)
+            item['time'] = float(row['Time Complexity Class']) - 1 # ceil?
 
             # See if this alg is in the current decade, else update the decade (and plot the previous decade's algs)
             if item['year'] < decade_start + 10:
@@ -263,8 +302,13 @@ def generate_graph(family_name, variation, type):
 
             for item in decade_algs[decade]:
                 on_frontier = True
-                for time in range(0, item['time']):
-                    if time in frontier:
+                # for time in range(0, item['time']):
+                    # if time in frontier:
+                    #     if item['space'] >= frontier[time]:
+                    #         on_frontier = False
+                    #         break
+                for time in frontier:
+                    if time < item['time']:
                         if item['space'] >= frontier[time]:
                             on_frontier = False
                             break
@@ -326,11 +370,17 @@ def generate_graph(family_name, variation, type):
         all_times = []
         for decade in decades_list:
             spaces, times, names, years, parallels, quantums = decades[decade]
-            if spaces and times:
-                all_spaces.extend(spaces)
-                all_times.extend(times)
+            together = [(space_, time_, year_) for space_, time_, year_ in zip(spaces, times, years)]
+            together = sorted(together, key=lambda x: x[2])
+            spaces = [x[0] for x in together]
+            times = [x[1] for x in together]
+            years = [x[2] for x in together]
+            all_spaces.extend(spaces)
+            all_times.extend(times)
         marker_radius = 0.045
         for x1, x2, y1, y2 in zip(all_spaces[:-1], all_spaces[1:], all_times[:-1], all_times[1:]):
+            if family_name == "Matrix Product" and x1 != 0:
+                continue
             dx = x2 - x1
             dy = y2 - y1
             if dx == 0:
@@ -379,9 +429,19 @@ def generate_graph(family_name, variation, type):
                 points_plotted += len(names)
 
                 # Annotate the algos
-                for i in range(len(names)):
-                    plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
-                                xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=0)#10)
+                if family_name == "Matrix Product":
+                    if decade == decades_list[0]:
+                        i = -1
+                        plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
+                                    xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=0)
+                    elif decade == decades_list[-1]:
+                        i = -1
+                        plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
+                                    xytext=(spaces[i] + 0.15, times[i]), color='#C71F1D', fontsize=12, weight='bold', rotation=0)
+                else:
+                    for i in range(len(names)):
+                        plt.annotate(names[i].split(';')[-1] + ', ' + str(years[i]), xy=(spaces[i], times[i]),
+                                    xytext=(spaces[i] + 0.15, times[i] + 0.15), color='#C71F1D', fontsize=12, weight='bold', rotation=0)#10)
                 
             # Drop the decade colors
             # colors_idx -= 1
@@ -389,19 +449,24 @@ def generate_graph(family_name, variation, type):
         # Drop the legend
         # plt.legend(prop={'size': 24})
 
-        plt.xlabel("Space Complexity (Augmented)", fontsize=20)
+        plt.xlabel("Space Complexity (Auxiliary)", fontsize=20)
         plt.ylabel("Time Complexity", fontsize=20)
-        if points_plotted > 1:
-            save_dest = "Analysis/Plots/Pareto Decades/Improvements/"
+        if variation == "By Family":
+            save_dest = "Analysis/Plots/Pareto Decades/By Family/"
         else:
-            save_dest = "Analysis/Plots/Pareto Decades/No Improvements/"
+            save_dest = "Analysis/Plots/Pareto Decades/By Variation/"
+
+        if points_plotted > 1:
+            save_dest += "Improvements/"
+        else:
+            save_dest += "No Improvements/"
         title_suffix = "Pareto Frontier"
 
     plt.box(on=None)
     plt.tick_params(axis='x', colors='Black', which='both', bottom=False, top=False, labelbottom=True)
     plt.tick_params(axis='y', colors='Black')
 
-    if variation != "" and variation != "by family" and variation != family_name:
+    if variation != "" and variation != "By Family" and variation != family_name:
         plt.title(variation + ' ('+family_name+')',
                   fontsize=20, color='Black') # #A6A6A6
     else:
@@ -410,20 +475,20 @@ def generate_graph(family_name, variation, type):
     # plt.yticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
     #                                       'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
     plt.yticks([0, 1, 2, 3, 4, 5, 6, 7], ('Constant', 'Logarithmic', 'Linear',
-                                          'Quasilinear', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), fontsize=8)
+                                          'n log n', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), weight='bold', fontsize=14)
     if type == 'both_tradeoffs' or type == 'pareto_decades':
         # plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ('constant', 'logn', 'linear',
         #                                   'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential'), weight='bold', fontsize=14)
         plt.xticks([0, 1, 2, 3, 4, 5, 6, 7], ('Constant', 'Logarithmic', 'Linear',
-                                          'Quasilinear', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), fontsize=8)
+                                          'n log n', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential'), weight='bold', fontsize=14)
         plt.grid(axis='both', color='#E8E8E8')
     else:
-        plt.xticks(fontsize=8)
+        plt.xticks(weight='bold', fontsize=14)
         plt.grid(axis='y', color='#E8E8E8')
     plt.tight_layout()
 
     try:
-        if variation != "" and variation != "by family":
+        if variation != "" and variation != "By Family":
             save_title = f"{family_name} - {variation} - {title_suffix}.png"
         else:
             save_title = f"{family_name} - {title_suffix}.png"
@@ -449,19 +514,34 @@ helpers.clean_data()
 # variation = "De Novo Genome Assembly"
 # family = "Integer Factoring"
 # variation = "Second Category Integer Factoring"
+# family = "Matrix Product"
+# variation = "Matrix Multiplication"
+# family = "Motif Search"
+# variation = "Motif Search"
+family = "Sorting"
+variation = "Comparison Sorting"
 
-# generate_graph(family, variation, 'space')
-# generate_graph(family, variation, 'time')
+generate_graph(family, variation, 'space')
+generate_graph(family, variation, 'time')
+generate_graph(family, variation, 'pareto_decades')
 # generate_graph(family, variation, 'both_time_improvements')
 # generate_graph(family, variation, 'both_tradeoffs')
-# generate_graph(family, variation, 'pareto_decades')
 
-families = helpers.get_families()
-for fam in families:
-    for var in helpers.get_variations(fam):
-        try:
-            generate_graph(fam, var, 'pareto_decades')
+# families = helpers.get_families()
+# for fam in families:
+#     for var in helpers.get_variations(fam):
+#         generate_graph(fam, var, 'pareto_decades')
+        # generate_graph(fam, var, 'space')
+        # generate_graph(fam, var, 'time')
+        # try:
+            # generate_graph(fam, var, 'pareto_decades')
             # generate_graph(fam, var, 'space')
             # generate_graph(fam, var, 'time')
-        except Exception as e:
-            print(fam, var, e)
+        # except Exception as e:
+        #     print(fam, var, e)
+
+
+# for fam in families:
+#     generate_graph(fam, "By Family", "pareto_decades")
+    # generate_graph(fam, "By Family", "space")
+    # generate_graph(fam, "By Family", "time")

@@ -53,3 +53,106 @@
 (DONE) 17. For Proportion of Algorithms that Improve…
     -Try changing to a pie chart, using same colors as lower bounds paper
     -List as percentages
+
+
+(DONE) Send Jayson tables for pies
+
+On Domain pages,
+    - Change "Related Problems" to "Problems within "Domain"
+
+Add lower bounds
+    - Label the lines as lower/upper bounds
+
+Are the bumps from when storage was small and space needed to be optimized?
+
+
+
+---------------------------
+
+Determine how to deal with multiple parameters
+
+Calculate input/output sizes
+
+Double check all complexity -> class
+
+
+Feedback from Neil's presentation
+- high level, very interested
+- how do we know the questions in the textbook are the right base set?
+    - no one has any better alternatives
+- each problem is weighted equally.. what about weighting them based on popularity?
+    - how often are the wikipedia pages accessed?
+    - google trend analysis
+    - at the family-level
+- maybe also look at the specific algorithm pages, looking at the top 100 algorithms on wikipedia as the base set
+- external memory models?
+- bioinformatics side project? (might be too deep)
+
+
+0 - gather the rest
+
+0.001 - categorize into issues
+    - missing reference
+    - etc.
+
+1 - double check
+
+
+how many space complexities are non-trivial/interesting?
+    - for how many, do we have space = time vs not equal?
+    - for how many, space super-linear?
+    - trivial vs longer proof? (just looking at the "reference" cell or on overleaf)
+        - if proofs are particularly interesting/involved
+        - motif search is interesting i think
+        - might make an interesting separate paper with a few more involved proofs
+    
+
+Paper sections
+--------------
+
+Introduction:
+    - big picture, why important/care
+    - main results
+
+(me / Jayson) Past work:
+    - Yash's paper
+    - Emily's thesis
+
+(Chirag) Background:
+    - what is space complexity?
+        - survey in TCS
+    - why does it matter?
+        - survey in practical computing size
+
+(me) Results:
+    - graphs
+    - each with a paragraph
+        - what it is in detail
+        - what analysis went into it
+        - sentence or so of discussion/interpretation
+
+Methodology:
+    - how these problems were chosen from prior paper  
+        - how we chose subsection of problems to consider
+    - (Jeffrey) how we gathered space complexity information
+    - (me) how we derived our analysis
+
+How to present the overleaf with the derivations or the raw data in some form
+
+
+Timeline
+--------
+this week: do all the 0.001 categorizations, send to the group
+
+2-3 weeks
+
+
+Make a list of assumptions
+    - e.g. V = O(E^2)
+    - choose the parameter relationship that makes the runtime the "worst", 
+
+Divide matrix multiplication by 2 (in terms of n^2)
+
+Make the "time complexity class" column with multiple parameters like with space
+
+create overleaf for paper
