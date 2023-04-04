@@ -875,7 +875,7 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
     plt.close("all")
     return [(sub_space, at_space, super_space), (sub_space / count, at_space / count, super_space / count)]
 
-def pie_best_space(by_family_or_variation, include_title):
+def pie_best_space(by_family_or_variation, include_title, df=None):
     """
     Args:
         by_family_or_variation: "Family" or "Variation"
@@ -883,11 +883,11 @@ def pie_best_space(by_family_or_variation, include_title):
     Returns:
         List of # of problems with best space algo in each of the classes
     """
-
-    df = pd.read_csv('Analysis/data.csv')
-    df = df.replace(np.nan, '', regex=True)
-    families = helpers.get_families(df)
-    counts = [0 for i in range(8)]
+    if df is None:
+        df = pd.read_csv('Analysis/data.csv')
+        df = df.replace(np.nan, '', regex=True)
+        families = helpers.get_families(df)
+        counts = [0 for i in range(8)]
 
     class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
 
@@ -947,6 +947,9 @@ def pie_best_space(by_family_or_variation, include_title):
     plt.clf()
     plt.close("all")
     return counts
+
+def pie_best_space_by_domain(by_family_or_variation, include_title):
+    domains = helpers.get_domains()
 
 def hist_papers_per_decade(include_title):
     """
@@ -1285,6 +1288,9 @@ pie_best_space_comparative(2, "Variation", include_title)
 
 pie_best_space("Family", include_title)
 pie_best_space("Variation", include_title)
+
+pie_best_space_domains("Family", include_title)
+pie_best_space_domains("Variation", include_title)
 
 print("\n-----------------------------\n")
 

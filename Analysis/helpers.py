@@ -69,12 +69,24 @@ def get_families(data=None):
     dataframe = dataframe.replace(np.nan, '', regex=True)
     return dataframe['Family Name'].unique()
 
+def get_domains(data=None):
+    """
+    Return a list of all the problem domains that appear on the spreadsheet
+    """
+    if data is None:
+        dataframe = pd.read_csv('Analysis/data.csv')
+    else:
+        dataframe = data
+    dataframe = dataframe.replace(np.nan, '', regex=True)
+    return dataframe['Domains'].unique()
+
 # families = get_families()
 # for fam in families:
 #     print(fam + ": ")
 #     print(get_variations(fam).tolist())
 clean_data()
 
+print(get_domains())
 # df = pd.read_csv("Analysis/data_dirty.csv")
 # cleaned = pd.read_csv("Analysis/data.csv")
 # print(df["Family Name"].unique() - cleaned["Family Name"].unique())

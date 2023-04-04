@@ -219,9 +219,14 @@ Big themes:
             - histogram of improvements per decade
         - Figures:
             - pie chart of constant, linear, superlinear
+                - (done) overall
+                - domains
             - pie chart absolute sizes of auxiliary space
+                - overall
+                - domains
             - pie chart relative size time vs space
-            - do these for the domains specifically too^
+                - overall
+                - domains
         - Very rarely see space improvements alone
             - if we have results from the relative pie
             - what percentage of time complexity improvements also showed a space complexity improvement, and vice versa (taking the conditional percentages on the )
