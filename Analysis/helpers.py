@@ -20,7 +20,8 @@ def clean_data():
     """
     dataframe = pd.read_csv('Analysis/data_dirty.csv')
     dataframe = dataframe.replace(np.nan, '', regex=True)
-    dataframe = dataframe[(dataframe['Time Complexity Class'] != '') &
+    dataframe = dataframe[(dataframe['Time Complexity Class'] != '#VALUE!') &
+                          (dataframe['Space Complexity Class'] != '#VALUE!') &
                           (dataframe["Looked at?"] != 0.001) &
                           (dataframe["Exact Problem Statement?"] == 1)]
 
@@ -57,11 +58,14 @@ def get_variations(family):
     algorithms = dataframe.loc[dataframe['Family Name'] == family]
     return algorithms['Variation'].unique()
 
-def get_families():
+def get_families(data=None):
     """
     Return a list of all the problem families that appear on the spreadsheet
     """
-    dataframe = pd.read_csv('Analysis/data.csv')
+    if data is None:
+        dataframe = pd.read_csv('Analysis/data.csv')
+    else:
+        dataframe = data
     dataframe = dataframe.replace(np.nan, '', regex=True)
     return dataframe['Family Name'].unique()
 

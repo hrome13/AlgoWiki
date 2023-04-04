@@ -20,25 +20,18 @@ def generate_graph(family_name, variation, type):
     # Get the algorithms for the specific family/variation
     algorithms = dataframe.loc[dataframe['Family Name'] == family_name].sort_values("Year")
 
-
     if variation != "By Family":
         # Set the starting algo for the variation as the first algo for the family (typically the naive algo)
         algorithms.loc[:, "Starting Time"] = algorithms["Time Complexity Class"].iloc[0]
+        algorithms.loc[:, "Starting Space"] = float(algorithms["Space Complexity Class"].iloc[0]) - 1
         algorithms.loc[:, "Starting Year"] = algorithms["Year"].iloc[0]
         algorithms.loc[:, "Starting Name"] = algorithms["Algorithm Name"].iloc[0]
-        row = algorithms.iloc[0]
-        spaces = row['Space Complexity Class'].split(',\n')
-        starting_space = 0
-        for dependency in spaces:
-            dependency_list = dependency.split(': ')
-            if dependency_list[0] == 'n' or dependency_list[0] == 'V':
-                starting_space = float(dependency_list[1]) - 1
-        algorithms.loc[:, "Starting Space"] = starting_space
 
         # Filter by variation name
         algorithms = algorithms.loc[algorithms['Variation'] == variation]
 
     sns.set_theme()
+    save_dest = ''
     
     # Check that the problem (+ variation) has data
     if algorithms.empty:
@@ -54,7 +47,7 @@ def generate_graph(family_name, variation, type):
     elif type == 'both_time_improvements':
         algorithms = algorithms[algorithms['Transition Class'].str.contains('->')].sort_values('Transition Class')
     elif type == 'space' or type == 'both_tradeoffs' or type == 'pareto_decades':
-        algorithms = algorithms[algorithms['Space Complexity Class'].str.contains(':')].sort_values('Year')
+        algorithms = algorithms[algorithms['Space Complexity Class']!=''].sort_values('Year')
         if algorithms.empty:
             print('No space complexity data found for family name: ' +
               family_name + ' and variation: ' + variation)
@@ -74,13 +67,7 @@ def generate_graph(family_name, variation, type):
         for index, row in algorithms.iterrows():
             item = {}
             item['year'] = int(row['Year'])
-
-            spaces = row['Space Complexity Class'].split(',\n')
-            for dependency in spaces:
-                dependency_list = dependency.split(': ')
-                if dependency_list[0] == 'n':
-                    item['space'] = float(dependency_list[1]) - 1
-            item['space'] = item.get('space', 0)
+            item['space'] = float(row['Space Complexity Class']) - 1
 
             if type == 'time' or type == 'both_time_improvements':
                 item['time'] = 8 - int(row['Transition Class'][3])
@@ -101,9 +88,6 @@ def generate_graph(family_name, variation, type):
 
         lower_x = [1940, 2021]
         lower_time = [2, 2]
-
-    plt.figure(figsize=(18, 9))
-    save_dest = ''
 
     # Create time bound improvement step plots
     if type == 'time':
@@ -185,17 +169,7 @@ def generate_graph(family_name, variation, type):
             #         best_space = item["space"]
             #         improvements.append(item)
 
-            item = {}
-            item['year'] = int(row['Year'])
-            spaces = row['Space Complexity Class'].split(',\n')
-
-            # Get the space complexity class that is relavent
-            for dependency in spaces:
-                dependency_list = dependency.split(': ')
-                if dependency_list[0] == 'n' or dependency_list[0] == 'V':
-                    item['space'] = float(dependency_list[1]) - 1
-            item['space'] = item.get('space', 0)
-            item['name'] = row['Algorithm Name']
+            item = {'year': int(row["Year"]), 'space': float(row["Space Complexity Class"]) - 1, 'name': row["Algorithm Name"]}
 
             # See if this algo improves the space bound
             if best_space is None:
@@ -271,17 +245,10 @@ def generate_graph(family_name, variation, type):
         for index, row in algorithms.iterrows():
             item = {}
             item['year'] = int(row['Year'])
-            spaces = row['Space Complexity Class'].split(',\n')
-
-            # Get the space complexity class that is relavent
-            for dependency in spaces:
-                dependency_list = dependency.split(': ')
-                if dependency_list[0] == 'n' or dependency_list[0] == 'V':
-                    item['space'] = math.ceil(float(dependency_list[1]) - 1) # math.ceil(float(dependency_list[1]) - 1)
             item['quantum?'] = row['Quantum?'] == 1 or row['Quantum?'] == "1"
             item['parallel?'] = row['Parallel?'] == 1 or row['Parallel?'] == "1"
-            item['space'] = item.get('space', 0)
             item['name'] = row['Algorithm Name']
+            item['space'] = float(row['Space Complexity Class']) - 1
             item['time'] = float(row['Time Complexity Class']) - 1 # ceil?
 
             # See if this alg is in the current decade, else update the decade (and plot the previous decade's algs)
@@ -462,6 +429,7 @@ def generate_graph(family_name, variation, type):
             save_dest += "No Improvements/"
         title_suffix = "Pareto Frontier"
 
+    plt.figure(figsize=(18, 9))
     plt.box(on=None)
     plt.tick_params(axis='x', colors='Black', which='both', bottom=False, top=False, labelbottom=True)
     plt.tick_params(axis='y', colors='Black')
@@ -518,30 +486,34 @@ helpers.clean_data()
 # variation = "Matrix Multiplication"
 # family = "Motif Search"
 # variation = "Motif Search"
-family = "Sorting"
-variation = "Comparison Sorting"
+# family = "Sorting"
+# variation = "Comparison Sorting"
+# family = "Hyperbolic Spline Interpolation"
+# variation = "Hyperbolic Spline Interpolation"
+# family = "Strongly Connected Components"
+# variation = "SCCs"
 
-generate_graph(family, variation, 'space')
-generate_graph(family, variation, 'time')
-generate_graph(family, variation, 'pareto_decades')
+# generate_graph(family, variation, 'space')
+# generate_graph(family, variation, 'time')
+# generate_graph(family, variation, 'pareto_decades')
 # generate_graph(family, variation, 'both_time_improvements')
 # generate_graph(family, variation, 'both_tradeoffs')
 
-# families = helpers.get_families()
+families = helpers.get_families()
 # for fam in families:
 #     for var in helpers.get_variations(fam):
 #         generate_graph(fam, var, 'pareto_decades')
-        # generate_graph(fam, var, 'space')
-        # generate_graph(fam, var, 'time')
+#         generate_graph(fam, var, 'space')
+#         generate_graph(fam, var, 'time')
         # try:
-            # generate_graph(fam, var, 'pareto_decades')
-            # generate_graph(fam, var, 'space')
-            # generate_graph(fam, var, 'time')
+        #     generate_graph(fam, var, 'pareto_decades')
+        #     generate_graph(fam, var, 'space')
+        #     generate_graph(fam, var, 'time')
         # except Exception as e:
         #     print(fam, var, e)
 
 
 # for fam in families:
 #     generate_graph(fam, "By Family", "pareto_decades")
-    # generate_graph(fam, "By Family", "space")
-    # generate_graph(fam, "By Family", "time")
+#     generate_graph(fam, "By Family", "space")
+#     generate_graph(fam, "By Family", "time")

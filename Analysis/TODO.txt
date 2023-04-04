@@ -156,3 +156,92 @@ Divide matrix multiplication by 2 (in terms of n^2)
 Make the "time complexity class" column with multiple parameters like with space
 
 create overleaf for paper
+
+
+
+if diff problem is not in sheet1 -> put in new entries
+
+algo not in paper -> double check that algo isn't there (if not, then flag and exclude)
+
+paper for modern computers caring more about space complexity
+speed of memory and speed of processing are both increasing exponentially but with different exponentials
+
+
+asymptotic bucketing
+- consistent with first paper
+    - round up
+- currently implemented
+    - use the floats
+    - log factors = 0.01
+    - loglog factors = 0.001
+- what makes most sense under different views
+    - polynomials, rounding up makes sense
+    - polylog, maybe round down to log?
+
+
+Start double-checking the '?' ones or the 'looked at? = 1' ones
+
+plans for this week:
+finish code
+start writing related work part
+
+
+plans for this week:
+Start double-checking the '?' ones or the 'looked at? = 1' ones
+
+plans for next 2 weeks (3/20/23):
+Double check the '?' ones or the 'looked at? = 1' ones
+Move the ~90 missing problems to the space notes overleaf (also Jeffrey working on this)
+Finish writing rough first draft (results, abstract, etc.)
+
+
+
+
+
+-------------------------------------
+
+April 24th -- full draft done by then.. so Neil and Jayson can read and give edits for a week, and then I do the revisions the week after that
+
+for next week or two, what does the story look like overall
+
+
+
+why this is important:
+    - increasing number of papers with space complexity analysis
+    - memory wall, processors getting faster so memory is becoming the restriction
+
+Big themes:
+    1. State of space complexity research
+        - what does the landscape look like for space complexity
+            - how many have linear, quadratic, etc.?
+            - do certain domains have really different distributions than others?
+            - overall, do we see a relationship between time and space of algorithms?
+            - histogram of improvements per decade
+        - Figures:
+            - pie chart of constant, linear, superlinear
+            - pie chart absolute sizes of auxiliary space
+            - pie chart relative size time vs space
+            - do these for the domains specifically too^
+        - Very rarely see space improvements alone
+            - if we have results from the relative pie
+            - what percentage of time complexity improvements also showed a space complexity improvement, and vice versa (taking the conditional percentages on the )
+                - just a bar chart with two bars
+    2. Changes over time
+        - space-time tradeoffs
+            - does this reflect that in the optimal case, there should be a tradeoff (for some problems, it is known that this tradeoff must exist)
+        - add discussion about why this is true (why do we see these tradeoffs?)
+    3. Rates of improvements
+        - rate of space improvement compared to the rate of improvement in time
+            - do this with multiple different n (1000, 10^6, 10^9)
+            - scatter plot, one dimension is time complexity improvement, other is space complexity improvement
+        - in hardware, memory is increasing exponentially
+            - space is also increasing exponentially but slower
+            - there is now a big gap b/w main memory and processor
+            - not only is hardware gap increasing, but also in theory we aren't getting as much gains in space
+            - for both time and space, we have hardware improvements (processor better(moore's law) or memory better), and efficiency improvements (algorithms)
+                - processors improving faster than memory, implies bottleneck in memory (memory wall)
+                - if space also isn't improving as fast as time, then this gap in improvements is similar to the gap in hardware
+                - on the other hand, if space is improving faster than time, then the gap in hardware is being compensated by the gap in theory
+
+
+for next week, do some of these analyses and sketch up some writing for them
