@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
 import helpers
+from matplotlib import cm as CM
 import seaborn as sns
 from tabulate import tabulate
 from scipy import stats
@@ -208,11 +209,12 @@ def get_time_improvements_by_type(family_name, variation, rounded_up):
     if algorithms.empty:
         print('No time data found for family name: ' +
               family_name + ' and variation: ' + variation)
-        return []
+        return [], []
 
 
     # Get the algorithms that improve the time bounds
     improvements = [] # elements of the type [a,b] where the improvements improve from runtime a to runtime b
+    names = []
     best_time = None
     algorithms = algorithms.sort_values('Year')
     for index, row in algorithms.iterrows():
@@ -227,13 +229,13 @@ def get_time_improvements_by_type(family_name, variation, rounded_up):
         # See if this alg improves the time bound
         if best_time is None:
             best_time = item['time']
+            names.append(item['name'])
         elif item['time'] < best_time:
             improvements.append([best_time, item['time']])
+            names.append(item['name'])
             best_time = item['time']
 
-    # if family_name == "Matrix Product":
-    #     print(improvements)
-    return improvements
+    return improvements, names
 
 def get_space_improvements_by_type(family_name, variation, rounded_up):
     df = pd.read_csv('Analysis/data.csv')
@@ -252,6 +254,7 @@ def get_space_improvements_by_type(family_name, variation, rounded_up):
 
     # Get the algorithms that improve the space bounds
     improvements = [] # elements of the type [a,b] where the improvements improve from runtime a to runtime b
+    names = []
     best_space = None
     algorithms = algorithms.sort_values('Year')
     for index, row in algorithms.iterrows():
@@ -266,11 +269,13 @@ def get_space_improvements_by_type(family_name, variation, rounded_up):
         # See if this alg improves the space bound
         if best_space is None:
             best_space = item['space']
+            names.append(item['name'])
         elif item['space'] < best_space:
             improvements.append([best_space, item['space']])
             best_space = item['space']
+            names.append(item['name'])
 
-    return improvements
+    return improvements, names
 
 def get_time_improvements_first_to_best(family_name, variation, rounded_up):
     df = pd.read_csv('Analysis/data.csv')
@@ -302,12 +307,12 @@ def get_time_improvements_first_to_best(family_name, variation, rounded_up):
 
         # See if this alg improves the time bound
         if best_time is None:
-            first_time = item['time']
-            best_time = item['time']
-        elif item['time'] < best_time:
-            best_time = item['time']
-        improvements = [[first_time, best_time]]
-
+            first_time = (item['time'], item['name'])
+            best_time = (item['time'], item['name'])
+        elif item['time'] < best_time[0]:
+            best_time = (item['time'], item['name'])
+        
+    improvements = [[first_time[0], best_time[0]]], [first_time[1], best_time[1]]
     return improvements
 
 def get_space_improvements_first_to_best(family_name, variation, rounded_up):
@@ -340,13 +345,12 @@ def get_space_improvements_first_to_best(family_name, variation, rounded_up):
 
         # See if this alg improves the space bound
         if best_space == "unassigned":
-            first_space = item['space']
-            best_space = item['space']
-        elif item['space'] < best_space:
-            best_space = item['space']
+            first_space = (item['space'], item['name'])
+            best_space = (item['space'], item['name'])
+        elif item['space'] < best_space[0]:
+            best_space = (item['space'], item['name'])
 
-    improvements = [[first_space, best_space]]
-
+    improvements = [[first_space[0], best_space[0]]], [first_space[1], best_space[1]]
     return improvements
 
 def hist_improvements(number_or_year, time_or_space, by_family_or_variation, include_title):
@@ -374,9 +378,9 @@ def hist_improvements(number_or_year, time_or_space, by_family_or_variation, inc
                 improvements.extend(res)
             elif number_or_year == "Number":
                 if time_or_space == "Time":
-                    res = get_time_improvements_by_type(fam, var, False)
+                    res = get_time_improvements_by_type(fam, var, False)[0]
                 elif time_or_space == "Space":
-                    res = get_space_improvements_by_type(fam, var, False)
+                    res = get_space_improvements_by_type(fam, var, False)[0]
                 improvements.append(len(res))
 
     if number_or_year == "Year":
@@ -446,9 +450,9 @@ def heat_improvements_by_type(time_or_space, by_family_or_variation, include_tit
 
         for var in vars:
             if time_or_space == "Space":
-                improvements = get_space_improvements_by_type(fam, var, True)
+                improvements = get_space_improvements_by_type(fam, var, True)[0]
             elif time_or_space == "Time":
-                improvements = get_time_improvements_by_type(fam, var, True)
+                improvements = get_time_improvements_by_type(fam, var, True)[0]
             if not improvements:
                 continue
             var_df = pd.DataFrame(improvements, columns=['Pre-Improvement', 'Post-Improvement'])
@@ -526,9 +530,9 @@ def heat_improvements_first_to_best(time_or_space, by_family_or_variation, inclu
 
         for var in vars:
             if time_or_space == "Space":
-                improvements = get_space_improvements_first_to_best(fam, var, True)
+                improvements = get_space_improvements_first_to_best(fam, var, True)[0]
             elif time_or_space == "Time":
-                improvements = get_time_improvements_first_to_best(fam, var, True)
+                improvements = get_time_improvements_first_to_best(fam, var, True)[0]
             if not improvements:
                 continue
             var_df = pd.DataFrame(improvements, columns=['Pre-Improvement', 'Post-Improvement'])
@@ -580,6 +584,78 @@ def heat_improvements_first_to_best(time_or_space, by_family_or_variation, inclu
     plt.close("all")
     return
 
+def heat_best_space_vs_time(include_title):
+    data = pd.read_csv('Analysis/data.csv')
+    data = data.replace(np.nan, '', regex=True)
+    count = 0
+    skipped = 0
+    df = pd.DataFrame(columns=["Best Space", "Best Time"])
+    for fam in helpers.get_families():
+        algorithms = helpers.get_algorithms_for_family(fam, data)
+        if algorithms.empty:
+            skipped += 1
+            continue
+
+        best_space = helpers.get_best_space(algorithms)
+        best_time = helpers.get_best_time(algorithms)
+        if best_space > best_time:
+            print(fam)
+            skipped += 1
+            continue
+        count += 1
+        fam_df = pd.DataFrame([[best_space, best_time]], columns=['Best Space', 'Best Time'])
+        df = pd.concat([df, fam_df], ignore_index=True)
+
+    # Create df cross tabulation for the heatmap
+    df2 = pd.crosstab(df['Best Space'], df['Best Time'])
+    for i in range(8):
+        if i not in df2.index:
+            df2.loc[i] = pd.Series(0, index=df2.columns)
+    for i in range(8):
+        if i not in df2.columns:
+            df2[i] = pd.Series(0, index=df2.index)
+    df2 = df2.sort_index(axis=0, ascending=False)
+    df2 = df2.sort_index(axis=1)
+    # my_labels = ['constant', 'logn', 'linear', 'nlogn', 'quadratic', 'cubic', 'poly > cubic', 'exponential']
+    my_labels = ['Constant', 'Logarithmic', 'Linear', 'n log n', 'Quadratic', 'Cubic', 'Poly (> Cubic)', 'Exponential']
+    my_labels_dict = {i: my_labels[i] for i in range(len(my_labels))}
+    df2 = df2.rename(index=my_labels_dict, columns=my_labels_dict)
+    # df2 = df2.replace(0, np.nan)
+
+    # Create the plot
+    sns.set_theme()
+    mask = np.rot90(np.triu(np.ones_like(df2, dtype=bool), k=1))
+    cmap = CM.get_cmap('bone_r', 50)
+    cmap = CM.get_cmap('BrBG', 200)
+    # cmap = sns.light_palette("seagreen", as_cmap=True)
+
+    ax = sns.heatmap(df2, mask=mask, annot=True, cmap=cmap, center=0, cbar=True) #, linewidth=0.3, linecolor='gray'
+
+    plt.box(on=None)
+    plt.tick_params(axis='x', colors='black', labelsize=8)
+    plt.tick_params(axis='y', colors='black', labelsize=8)
+    plt.xlabel(f"Best Time Complexity")
+    plt.ylabel(f"Best Auxiliary Space Complexity")
+    ax.xaxis.tick_top()
+    ax.xaxis.set_label_position('top') 
+    ax.invert_xaxis()
+    # ax.yaxis.tick_right()
+    # ax.yaxis.set_label_position('right')
+    # plt.setp(ax.get_yticklabels(), rotation=0, ha="left",
+    #      rotation_mode="anchor") # if you want x-axis label on top, change to ha="left"
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="left",
+         rotation_mode="anchor") # if you want x-axis label on top, change to ha="left"
+    plt.tight_layout()
+
+    # Save the plot
+    save_dest = "Analysis/Plots/Heatmaps/"
+    title = "Best Space vs Time"
+    try:
+        plt.savefig(f"{save_dest}{title}.png", dpi=300, bbox_inches='tight')
+    except Exception as e:
+        print(e)
+        print("Failed")
+    
 def heat_size_of_improvements(by_family_or_variation, include_title):
     save_dest = 'Analysis/Plots/Heatmaps/'
 
@@ -594,10 +670,10 @@ def heat_size_of_improvements(by_family_or_variation, include_title):
             vars = ["by family"]
 
         for var in vars:
-            space_improvements = get_space_improvements_by_type(fam, var, True)
+            space_improvements = get_space_improvements_by_type(fam, var, True)[0]
             space_var_df = pd.DataFrame(space_improvements, columns=['Pre-Improvement', 'Post-Improvement'])
             space_df = pd.concat([space_df, space_var_df], ignore_index=True)
-            time_improvements = get_time_improvements_by_type(fam, var, True)
+            time_improvements = get_time_improvements_by_type(fam, var, True)[0]
             time_var_df = pd.DataFrame(time_improvements, columns=['Pre-Improvement', 'Post-Improvement'])
             time_df = pd.concat([time_df, time_var_df], ignore_index=True)
     
@@ -773,7 +849,7 @@ def heat_2x2_time_space_improvements(by_problem_or_algorithm, by_family_or_varia
     plt.close("all")
     return
 
-def pie_best_space_comparative(num_for_split, by_family_or_variation, include_title):
+def pie_best_space_comparative(num_for_split, by_family_or_variation, include_title, domain=None, df=None):
     """
     0: Constant
     1: Log n
@@ -789,8 +865,10 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
             Tuple of the proportions of the above
     """
 
-    df = pd.read_csv('Analysis/data.csv')
-    df = df.replace(np.nan, '', regex=True)
+    if df is None:
+        df = pd.read_csv('Analysis/data.csv')
+        df = df.replace(np.nan, '', regex=True)
+
     families = helpers.get_families(df)
     sub_space = 0
     at_space = 0
@@ -799,24 +877,12 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
 
     class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
 
-    def get_best_space(algorithms):
-        """Get the best space complexity from the input algorithms (e.g. from a family or variation)"""
-        best_space = 8
-        for index, row in algorithms.iterrows():
-            item = {}
-            item['year'] = int(row['Year'])
-            item['space'] = math.ceil(float(row['Space Complexity Class']) - 1)
-            item['name'] = row['Algorithm Name']
-
-            if item['space'] < best_space:
-                best_space = item['space']
-
-        return best_space
-
     if by_family_or_variation == "Variation":
         print(f"\nProblem variations with best-space that is super-{class_string[num_for_split]}")
     else:
         print(f"\nProblem families with best-space that is super-{class_string[num_for_split]}")
+        if domain is not None:
+            print(f"in the domain {domain}")
 
     for family_name in families:
         vars = helpers.get_variations(family_name)
@@ -828,7 +894,7 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
                     print('No data found for family name: ' +
                         family_name + ' and variation: ' + variation)
                     continue
-                best_space = get_best_space(var_algorithms)
+                best_space = helpers.get_best_space(var_algorithms)
                 count += 1
                 if best_space < num_for_split:
                     sub_space += 1
@@ -842,7 +908,7 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
                 print('No data found for family name: ' +
                     family_name)
                 continue
-            best_space = get_best_space(algorithms)
+            best_space = helpers.get_best_space(algorithms)
             count += 1
             if best_space < num_for_split:
                 sub_space += 1
@@ -853,29 +919,53 @@ def pie_best_space_comparative(num_for_split, by_family_or_variation, include_ti
                 super_space += 1
                 
     print(f"\nNumbers of {by_family_or_variation}:")
+    if domain is not None:
+        print(f"in domain {domain}")
     print(f"Sub-{class_string[num_for_split]}: {sub_space}, ({sub_space / count})")
     print(f"At-{class_string[num_for_split]}: {at_space}, ({at_space / count})")
     print(f"Super-{class_string[num_for_split]}: {super_space}, ({super_space / count})\n")
     if num_for_split == 0:
         data = [at_space, super_space]
-        labels = [f"At-{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
+        labels = [f"{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
         explode = [0, 0]
     else:
         data = [sub_space, at_space, super_space]
-        labels = [f"Sub-{class_string[num_for_split]}", f"At-{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
+        labels = [f"Sub-{class_string[num_for_split]}", f"{class_string[num_for_split]}", f"Super-{class_string[num_for_split]}"]
         explode = [0,0,0.1]
     sns.set_palette("Reds", 3)
     plt.figure(figsize=(18, 9))
-    plt.pie(data, labels=labels, autopct='%1.1f%%', explode=explode)
+    for i in range(len(data)):
+        if data[i] == 0:
+            labels[i] = None
+
+    def make_autopct(counts):
+        def my_autopct(pct):
+            total = sum(counts)
+            val = int(round(pct*total/100.0))
+            if val == 0:
+                return ""
+            else:
+                return '{p:.1f}%'.format(p=pct)
+        return my_autopct
+        
+    plt.pie(data, labels=labels, autopct=make_autopct(data), explode=explode, startangle=90, counterclock=False)
+    if domain is not None:
+        plt.title(f"{domain}", fontsize=20)
     if include_title:
-        plt.title(f"Problems' Best Space Complexity (Auxiliary) Compared to {class_string[num_for_split]} Space")
-    save_dest = "Analysis/Plots/Best Space Algos/"
+        if domain is not None:
+            plt.title(f"Problems' Best Space Complexity (Auxiliary) Compared to {class_string[num_for_split]} Space")
+        else:
+            plt.title(f"{domain} Problems' Best Space Complexity (Auxiliary) Compared to {class_string[num_for_split]} Space")
+    if domain is None:
+        save_dest = "Analysis/Plots/Best Space Algos/"
+    else:
+        save_dest = f"Analysis/Plots/Best Space Algos/By Domain/{domain} "
     plt.savefig(f"{save_dest}{class_string[num_for_split]} Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
     plt.clf()
     plt.close("all")
     return [(sub_space, at_space, super_space), (sub_space / count, at_space / count, super_space / count)]
 
-def pie_best_space(by_family_or_variation, include_title, df=None):
+def pie_best_space(by_family_or_variation, include_title, domain=None, df=None):
     """
     Args:
         by_family_or_variation: "Family" or "Variation"
@@ -886,29 +976,18 @@ def pie_best_space(by_family_or_variation, include_title, df=None):
     if df is None:
         df = pd.read_csv('Analysis/data.csv')
         df = df.replace(np.nan, '', regex=True)
-        families = helpers.get_families(df)
-        counts = [0 for i in range(8)]
+
+    families = helpers.get_families(df)
+    counts = [0 for i in range(8)]
 
     class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
-
-    def get_best_space(algorithms):
-        """Get the best space complexity from the input algorithms (e.g. from a family or variation)"""
-        best_space = 8
-        for index, row in algorithms.iterrows():
-            item = {}
-            item['year'] = int(row['Year'])
-            item['space'] = math.ceil(float(row['Space Complexity Class']) - 1)
-            item['name'] = row['Algorithm Name']
-
-            if item['space'] < best_space:
-                best_space = item['space']
-
-        return best_space
 
     if by_family_or_variation == "Variation":
         print(f"\nProblem variations with best-space")
     else:
         print(f"\nProblem families with best-space")
+        if domain is not None:
+            print(f"in the domain {domain}")
 
     for family_name in families:
         vars = helpers.get_variations(family_name)
@@ -920,14 +999,14 @@ def pie_best_space(by_family_or_variation, include_title, df=None):
                     print('No data found for family name: ' +
                         family_name + ' and variation: ' + variation)
                     continue
-                best_space = get_best_space(var_algorithms)
+                best_space = helpers.get_best_space(var_algorithms)
                 counts[best_space] += 1
         else:
             if algorithms.empty:
                 print('No data found for family name: ' +
                     family_name)
                 continue
-            best_space = get_best_space(algorithms)
+            best_space = helpers.get_best_space(algorithms)
             counts[best_space] += 1
                 
     print(f"\nNumbers of {by_family_or_variation}:")
@@ -936,20 +1015,149 @@ def pie_best_space(by_family_or_variation, include_title, df=None):
     print()
 
     labels = [class_string[i] for i in range(len(class_string))]
+    for i in range(len(counts)):
+        if counts[i] == 0:
+            labels[i] = None
     sns.set_palette("Reds", len(class_string))
     plt.figure(figsize=(18, 9))
-    patches, texts, autotexts = plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=90, counterclock=False)
+
+    def make_autopct(counts):
+        def my_autopct(pct):
+            total = sum(counts)
+            val = int(round(pct*total/100.0))
+            if val == 0:
+                return ""
+            else:
+                return '{p:.1f}%'.format(p=pct)
+        return my_autopct
+
+    # patches, texts, autotexts = plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=90, counterclock=False)
+    patches, texts, autotexts = plt.pie(counts, labels=labels, autopct=make_autopct(counts), startangle=90, counterclock=False)
+    if domain is not None:
+        plt.title(f"{domain}", fontsize=20)
     if include_title:
-        plt.title(f"Problems' Best Auxiliary Space Complexity")
-    save_dest = "Analysis/Plots/Best Space Algos/"
+        if domain is None:
+            plt.title(f"Problems' Best Auxiliary Space Complexity")
+        else:
+            plt.title(f"{domain} Problems' Best Auxiliary Space Complexity")
+    if domain is None:
+        save_dest = "Analysis/Plots/Best Space Algos/"
+    else:
+        save_dest = f"Analysis/Plots/Best Space Algos/By Domain/{domain} "
     plt.tight_layout()
     plt.savefig(f"{save_dest}Best Space Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
     plt.clf()
     plt.close("all")
     return counts
 
+def pie_best_time(by_family_or_variation, include_title, domain=None, df=None):
+    """
+    Args:
+        by_family_or_variation: "Family" or "Variation"
+
+    Returns:
+        List of # of problems with best space algo in each of the classes
+    """
+    if df is None:
+        df = pd.read_csv('Analysis/data.csv')
+        df = df.replace(np.nan, '', regex=True)
+
+    families = helpers.get_families(df)
+    counts = [0 for i in range(8)]
+
+    class_string = {0: "Constant", 1: "Logarithmic", 2: "Linear", 3: "n log n", 4: "Quadratic", 5: "Cubic", 6: "Polynomial (> 3)", 7: "Exponential"}
+
+    if by_family_or_variation == "Variation":
+        print(f"\nProblem variations with best-time")
+    else:
+        print(f"\nProblem families with best-time")
+        if domain is not None:
+            print(f"in the domain {domain}")
+
+    for family_name in families:
+        vars = helpers.get_variations(family_name)
+        algorithms = df.loc[df['Family Name'] == family_name]
+        if by_family_or_variation == "Variation":   
+            for variation in vars:
+                var_algorithms = algorithms.loc[algorithms['Variation'] == variation]
+                if var_algorithms.empty:
+                    print('No data found for family name: ' +
+                        family_name + ' and variation: ' + variation)
+                    continue
+                best_time = helpers.get_best_time(var_algorithms)
+                counts[best_time] += 1
+        else:
+            if algorithms.empty:
+                print('No data found for family name: ' +
+                    family_name)
+                continue
+            best_time = helpers.get_best_time(algorithms)
+            counts[best_time] += 1
+                
+    print(f"\nNumbers of {by_family_or_variation}:")
+    for i in range(len(class_string)):
+        print(f"{class_string[i]}: {counts[i]}, ({'{:.2f}'.format(counts[i] / sum(counts) * 100)}%)")
+    print()
+
+    labels = [class_string[i] for i in range(len(class_string))]
+    for i in range(len(counts)):
+        if counts[i] == 0:
+            labels[i] = None
+    sns.set_palette("Reds", len(class_string))
+    plt.figure(figsize=(18, 9))
+
+    def make_autopct(counts):
+        def my_autopct(pct):
+            total = sum(counts)
+            val = int(round(pct*total/100.0))
+            if val == 0:
+                return ""
+            else:
+                return '{p:.1f}%'.format(p=pct)
+        return my_autopct
+
+    # patches, texts, autotexts = plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=90, counterclock=False)
+    patches, texts, autotexts = plt.pie(counts, labels=labels, autopct=make_autopct(counts), startangle=90, counterclock=False)
+    if domain is not None:
+        plt.title(f"{domain}", fontsize=20)
+    if include_title:
+        if domain is None:
+            plt.title(f"Problems' Best Time Complexity")
+        else:
+            plt.title(f"{domain} Problems' Best Auxiliary Time Complexity")
+    if domain is None:
+        save_dest = "Analysis/Plots/Best Time Algos/"
+    else:
+        save_dest = f"Analysis/Plots/Best Time Algos/By Domain/{domain} "
+    plt.tight_layout()
+    plt.savefig(f"{save_dest}Best Time Pie (by {by_family_or_variation}).png", dpi=300, bbox_inches='tight')
+    plt.clf()
+    plt.close("all")
+    return counts
+
+def pie_best_space_comparative_by_domain(num_for_split, by_family_or_variation, include_title):
+    """Plot the pie chart of best space compared to a specific class for all problems in each domain separately"""
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    gb = df.groupby(by="Domains")
+    for domain, group in gb:
+        pie_best_space_comparative(num_for_split, by_family_or_variation, include_title, domain, group)
+
 def pie_best_space_by_domain(by_family_or_variation, include_title):
-    domains = helpers.get_domains()
+    """Plot the pie chart of best space for all problems in each domain separately"""
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    gb = df.groupby(by="Domains")
+    for domain, group in gb:
+        pie_best_space(by_family_or_variation, include_title, domain, group)
+
+def pie_best_time_by_domain(by_family_or_variation, include_title):
+    """Plot the pie chart of best space for all problems in each domain separately"""
+    df = pd.read_csv('Analysis/data.csv')
+    df = df.replace(np.nan, '', regex=True)
+    gb = df.groupby(by="Domains")
+    for domain, group in gb:
+        pie_best_time(by_family_or_variation, include_title, domain, group)
 
 def hist_papers_per_decade(include_title):
     """
@@ -1021,9 +1229,6 @@ def hist_space_analysis_per_decade(absolute_or_percent, original, include_title)
     sns.set_theme()
     analyzed_counts, analyzed_bins, patches = plt.hist(analyzed_years, bins=bins)
 
-    print(f"\n{plot_title}")
-    for bar, b0, b1 in zip(analyzed_counts, analyzed_bins[:-1], analyzed_bins[1:]):
-        print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
 
     plt.ylabel("Number of Papers")
     plt.xlabel("Decade Published")
@@ -1041,9 +1246,13 @@ def hist_space_analysis_per_decade(absolute_or_percent, original, include_title)
     sns.set_theme()
     not_analyzed_counts, not_analyzed_bins, patches = plt.hist(not_analyzed_years, bins=bins)
 
-    print(f"\n{plot_title}")
-    for bar, b0, b1 in zip(not_analyzed_counts, not_analyzed_bins[:-1], not_analyzed_bins[1:]):
-        print(f'{b0:3d} - {b1:3d}: {bar:4.0f}')
+    print(f"\nNumber of Papers Per Decade With Space Analysis")
+    for bar, b0, b1, other in zip(analyzed_counts, analyzed_bins[:-1], analyzed_bins[1:], not_analyzed_counts):
+        print(f'{b0:3d} - {b1:3d}: {bar:4.0f} ({(bar/(bar + other) * 100):.2f}%)')
+
+    print(f"\nNumber of Papers Per Decade Without Space Analysis")
+    for bar, b0, b1, other in zip(not_analyzed_counts, not_analyzed_bins[:-1], not_analyzed_bins[1:], analyzed_counts):
+        print(f'{b0:3d} - {b1:3d}: {bar:4.0f} ({(bar/(bar + other) * 100):.2f}%)')
 
     plt.ylabel("Number of Papers")
     plt.xlabel("Decade Published")
@@ -1240,62 +1449,91 @@ include_title = False
 
 helpers.clean_data()
 
-hist_optimal_algos_per_decade("Family", include_title)
-hist_optimal_algos_per_decade("Variation", include_title)
+# hist_optimal_algos_per_decade("Family", include_title)
+# hist_optimal_algos_per_decade("Variation", include_title)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-hist_improvements("Number", "Time", "Family", include_title)
-hist_improvements("Number", "Time", "Variation", include_title)
-hist_improvements("Number", "Space", "Family", include_title)
-hist_improvements("Number", "Space", "Variation", include_title)
-hist_improvements("Year", "Time", "Family", include_title)
-hist_improvements("Year", "Time", "Variation", include_title)
-hist_improvements("Year", "Space", "Family", include_title)
-hist_improvements("Year", "Space", "Variation", include_title)
+# hist_improvements("Number", "Time", "Family", include_title)
+# hist_improvements("Number", "Time", "Variation", include_title)
+# hist_improvements("Number", "Space", "Family", include_title)
+# hist_improvements("Number", "Space", "Variation", include_title)
+# hist_improvements("Year", "Time", "Family", include_title)
+# hist_improvements("Year", "Time", "Variation", include_title)
+# hist_improvements("Year", "Space", "Family", include_title)
+# hist_improvements("Year", "Space", "Variation", include_title)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_improvements_by_type("Time", "Family", include_title)
-heat_improvements_by_type("Time", "Variation", include_title)
-heat_improvements_by_type("Space", "Family", include_title)
-heat_improvements_by_type("Space", "Variation", include_title)
+# heat_improvements_by_type("Time", "Family", include_title)
+# heat_improvements_by_type("Time", "Variation", include_title)
+# heat_improvements_by_type("Space", "Family", include_title)
+# heat_improvements_by_type("Space", "Variation", include_title)
 
-heat_improvements_first_to_best("Time", "Family", include_title)
-heat_improvements_first_to_best("Time", "Variation", include_title)
-heat_improvements_first_to_best("Space", "Family", include_title)
-heat_improvements_first_to_best("Space", "Variation", include_title)
+# heat_improvements_first_to_best("Time", "Family", include_title)
+# heat_improvements_first_to_best("Time", "Variation", include_title)
+# heat_improvements_first_to_best("Space", "Family", include_title)
+# heat_improvements_first_to_best("Space", "Variation", include_title)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_size_of_improvements("Family", include_title)
-heat_size_of_improvements("Variation", include_title)
+# heat_size_of_improvements("Family", include_title)
+# heat_size_of_improvements("Variation", include_title)
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-heat_2x2_time_space_improvements("Algorithm", "Family", include_title)
-heat_2x2_time_space_improvements("Algorithm", "Variation", include_title)
-heat_2x2_time_space_improvements("Problem", "Family", include_title)
-heat_2x2_time_space_improvements("Problem", "Variation", include_title)
+# heat_2x2_time_space_improvements("Algorithm", "Family", include_title)
+# heat_2x2_time_space_improvements("Algorithm", "Variation", include_title)
+# heat_2x2_time_space_improvements("Problem", "Family", include_title)
+# heat_2x2_time_space_improvements("Problem", "Variation", include_title)
 
 
-print("\n-----------------------------\n")
+# print("\n-----------------------------\n")
 
-pie_best_space_comparative(0, "Family", include_title)
-pie_best_space_comparative(0, "Variation", include_title)
-pie_best_space_comparative(2, "Family", include_title)
-pie_best_space_comparative(2, "Variation", include_title)
+# pie_best_space_comparative(0, "Family", include_title)
+# pie_best_space_comparative(0, "Variation", include_title)
+# pie_best_space_comparative(2, "Family", include_title)
+# pie_best_space_comparative(2, "Variation", include_title)
 
-pie_best_space("Family", include_title)
-pie_best_space("Variation", include_title)
+# pie_best_space_comparative_by_domain(0, "Family", include_title)
+# pie_best_space_comparative_by_domain(2, "Family", include_title)
 
-pie_best_space_domains("Family", include_title)
-pie_best_space_domains("Variation", include_title)
+# pie_best_space("Family", include_title)
+# pie_best_space("Variation", include_title)
+# pie_best_time("Family", include_title)
 
-print("\n-----------------------------\n")
+# pie_best_space_by_domain("Family", include_title)
+# pie_best_time_by_domain("Family", include_title)
 
-hist_papers_per_decade(include_title)
-hist_space_analysis_per_decade("Percent", False, include_title)
-hist_space_analysis_per_decade("Percent", True, include_title)
-hist_space_and_time_improvements_per_decade("Family", include_title)
-hist_space_and_time_improvements_per_decade("Variation", include_title)
+# print("\n-----------------------------\n")
+
+# hist_papers_per_decade(include_title)
+# hist_space_analysis_per_decade("Percent", False, include_title)
+# hist_space_analysis_per_decade("Percent", True, include_title)
+# hist_space_and_time_improvements_per_decade("Family", include_title)
+# hist_space_and_time_improvements_per_decade("Variation", include_title)
+
+
+
+
+# count = 0
+# total = 0
+# for family in helpers.get_families():
+    # improvements = get_space_improvements_by_type(family, "by family", False)[1]
+    # improvements = get_time_improvements_by_type(family, "by family", False)[1]
+    # total += 1
+    # if len(improvements) == 1:
+    #     continue
+    # else:
+        # count += 1
+        # print()
+        # print(family)
+        # print(improvements)
+        # print()
+# print(f"{count} out of {total}")
+
+
+heat_best_space_vs_time(True)
+
+# pie_best_space("Family", True)
+# pie_best_time("Family", True)

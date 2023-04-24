@@ -213,23 +213,23 @@ why this is important:
 Big themes:
     1. State of space complexity research
         - what does the landscape look like for space complexity
-            - how many have linear, quadratic, etc.?
-            - do certain domains have really different distributions than others?
+            - (done) how many have linear, quadratic, etc.?
+            - (done) do certain domains have really different distributions than others?
             - overall, do we see a relationship between time and space of algorithms?
             - histogram of improvements per decade
         - Figures:
             - pie chart of constant, linear, superlinear
                 - (done) overall
-                - domains
+                - (done) domains
             - pie chart absolute sizes of auxiliary space
-                - overall
-                - domains
+                - (done) overall
+                - (done) domains
             - pie chart relative size time vs space
                 - overall
                 - domains
         - Very rarely see space improvements alone
             - if we have results from the relative pie
-            - what percentage of time complexity improvements also showed a space complexity improvement, and vice versa (taking the conditional percentages on the )
+            - what percentage of time complexity improvements also showed a space complexity improvement, and vice versa (taking the conditional percentages on the 2x2 plot)
                 - just a bar chart with two bars
     2. Changes over time
         - space-time tradeoffs
@@ -237,16 +237,112 @@ Big themes:
         - add discussion about why this is true (why do we see these tradeoffs?)
     3. Rates of improvements
         - rate of space improvement compared to the rate of improvement in time
-            - do this with multiple different n (1000, 10^6, 10^9)
-            - scatter plot, one dimension is time complexity improvement, other is space complexity improvement
+            - (done) do this with multiple different n (1000, 10^6, 10^9)
+            - (done, kinda) scatter plot, one dimension is time complexity improvement, other is space complexity improvement
         - in hardware, memory is increasing exponentially
             - space is also increasing exponentially but slower
             - there is now a big gap b/w main memory and processor
             - not only is hardware gap increasing, but also in theory we aren't getting as much gains in space
             - for both time and space, we have hardware improvements (processor better(moore's law) or memory better), and efficiency improvements (algorithms)
                 - processors improving faster than memory, implies bottleneck in memory (memory wall)
-                - if space also isn't improving as fast as time, then this gap in improvements is similar to the gap in hardware
+                - (THIS) if space also isn't improving as fast as time, then this gap in improvements is similar to the gap in hardware
                 - on the other hand, if space is improving faster than time, then the gap in hardware is being compensated by the gap in theory
 
 
 for next week, do some of these analyses and sketch up some writing for them
+
+
+(DONE) By domain graphs
+ - stack bar, each layer in the stack is a different classification
+ - all domains have two bars, one for time, one for space
+ - domains lined up side-by-side
+ - group sub-linear, linear, poly, exponential
+
+
+already so many start off as 
+
+(DONE) for x% of problems, time complexity improves faster than space complexity, exasberating the memory wall problem
+    - For 40% of problem families, time improves faster
+    - For 12.7%, space improves faster
+    - For the rest, equal rates
+(DONE) typical ratio of this is x
+    - nearly all of these problems in which time improves faster are s.t. space has not seen improvement
+
+maybe put a squiggly in the axis
+
+use the graphs on the right for the RATE stuff
+add commentary w.r.t. time
+
+
+scatterplot time vs space
+ - replace >100% with something like 105%
+ 1. levels at the end
+ 2. rates of change
+        - not much interesting about this one
+
+Make slides to think about how they fit together
+
+figure 1
+- overview of space complexity
+        - here's complexity of the problems
+        - histogram of when the problems were discovered
+        - percentage of papers that include analysis
+
+figure 2
+- rate of progress
+        - how many improved?
+        - how much improvement?
+
+figure 3
+- comparing space to time complexity
+        - tradeoffs graph
+        - scatterplot
+        - 2x2 stuff
+
+
+
+Figures Feedback
+
+Figure 1
+    - 1a, doesn't go with 1b/1c
+        - not really an overview
+    - 1b1, keep this (not in either of the other papers)
+    - 1c, keep
+    - just b1 and c for this
+
+    - (done) 1b2
+        - put in lighter red above it, the ones that were analyzed later
+
+Figure 2
+    - (done) would be nice to put the comparison for DRAM rates of improvement
+        - speed ~10%
+        - capacity ~40%
+        - put two dotted lines for those to show the divisions^ (include the #s)
+        - increase the font sizes
+        - try to log scale
+            - log_{sqrt(10)}
+        - put text next to the actual a,b,c in addition to the caption
+
+Figure 3
+    - (done) 3a, maybe a bicolor gradient
+        - add a column with everything together
+        - Within the ranges, I can extend the color range (darker)
+            - invert the color speed (darkest at the bottom)
+        - break up the graph into two, so that the text is bigger, more legible
+        - sublinear, quasilinear, polynomial, exponential
+        - can also try putting a black outline in the subbars
+        - double check if we want problem families to be in multiple domains
+            - don't need to address for thesis, do need to address for published paper
+            - maybe put a star, mentioning that this involves an exclusive categorization that might want to be revisited
+    - 3b, put in a new figure 4, and show the pareto frontier graphs
+    - (done) 3c1,
+        - Jayson: n log n and log n don't have any problem famililes with best space
+            - 1117 are all  > linear, but < best time
+            - the smaller time complexities have more constant space than the linear
+        - put 0's in the bottom left triangle, where it is possible to have things
+            - or put like a grey in the top right triangle
+        - include the heatmap legend
+
+    - 3c2, don't include this figure, but maybe mention it in the text
+
+- group 3b with a pareto frontier graph
