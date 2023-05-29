@@ -346,3 +346,9 @@ Figure 3
     - 3c2, don't include this figure, but maybe mention it in the text
 
 - group 3b with a pareto frontier graph
+
+
+--------------
+Todo:
+
+    Tell Jayson the particular families that are constant space and exp time

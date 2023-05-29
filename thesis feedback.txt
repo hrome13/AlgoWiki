@@ -1,0 +1,82 @@
+
+
+future works stuff
+
+want to understand how much compute has progressed in the past, and how fast in the future?
+    - algorithms work
+
+In practice, we don't just care about these exact algorithms, though. How do people solve these problems in the future? Parallel computing, quantum computing, approximation algorithms, etc.
+Hardware: buying hardware costs money
+Algorithms: using the optimal algorithm costs nothing
+Approximation: 
+
+Gathering algorithms that people are actually using in practice, by looking through a bunch of open-source code
+
+Also can look at other measures of how important problems are   
+    - wikipedia mentions
+    - open-source libraries
+    -
+if plenty of overlap, then that's great. The choice of problems was right and we can generalize these results for algorithm work as a whole.
+if not, then we can look at the different results when using the top 100 problems using each of the different metrics
+
+Organize all of the computer science research
+    - what are the open problems?
+    - what problems are being considered?
+    - what if we parameterize?
+    - implementations?
+Currently very annoying to go through all papers' related works to find the most recent papers on each problem
+
+
+
+
+
+May 8 meeting:
+
+Track down what needs to happen to turn it in
+    - I submit online
+    - department verifies formatting
+    - i send a link to my supervisors
+
+PUT ALT-TEXT for FIGURES (do in Adobe Acrobat)
+
+try to show a second problem family maybe?
+PARETO GRAPH: ADD TITLE "Percentage of Algorithm Families with Time-Space Complexity Tradeoffs"
+
+
+
+
+Memory wall:
+
+if you have smaller memory, you still might have the same # of accesses
+BUT smaller memory footprint, more likely that you can put your data in cache which is (so better space complexity, memory wall is less of a problem)
+BUT even with large space complexity, still might be able to do a bunch of computations in memory rather than on disk and then cycle the memory
+
+two limits
+    - hard limit of if you can store at all
+    - lower limit of can you store it all in cache and perform a bunch of computation (spatial/temporal locality)
+
+spatial/temporal locality are orthogonal
+
+figure 3
+    - capicty improvmeent rate very important
+        - important to keep things in memory rather than having things on disk
+            - algorithmic improvements are much more important in bringing things into memory than the DRAM capacity speed
+        - in memory databases, people want things to 
+    - speed rate: if you move from 
+
+    - what are algorithms throttled by?
+        - moving storage from main memory to ram, ram to L3, to something else...
+        - is main issue accesses with RAM or is it something lower down?
+        - if very cache efficient at level of L3,
+        - entire RAM filled with hash table, you care about ram accesses
+        - 
+
+
+RAM faster
+    - L1, L2, L3, RAM, main memory
+    - in some world, 100% of stuff you're working on is in RAM
+        - RAM access speeds 3% faster => runtime is 3% faster
+    - if more space efficient, can have some stuff in L3 and some in RAM
+        - how much of a speedup do we get?
+        - if we have e.g. 3% of the accesses in L3 now and 97% in RAM, then if the 3% was infinitely sped up by moving to L3, then we have the same effect as RAM speed improving by 3% (L3 is about 5x faster than RAM)
+        - if reducing the space usage allows us to move things down the memory hierarchy, 

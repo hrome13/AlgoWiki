@@ -629,8 +629,9 @@ def heat_best_space_vs_time(include_title):
     cmap = CM.get_cmap('BrBG', 200)
     # cmap = sns.light_palette("seagreen", as_cmap=True)
 
-    ax = sns.heatmap(df2, mask=mask, annot=True, cmap=cmap, center=0, cbar=True) #, linewidth=0.3, linecolor='gray'
-
+    ax = sns.heatmap(df2, mask=mask, annot=True, cmap=cmap, cbar_kws={"shrink": 0.95}, center=-1, cbar=True, linewidths=0.001,linecolor="grey") #, linewidth=0.3, linecolor='gray'
+    cbar = ax.collections[0].colorbar
+    cbar.set_label("Number of Problem Families", labelpad=25, rotation=270)
     plt.box(on=None)
     plt.tick_params(axis='x', colors='black', labelsize=8)
     plt.tick_params(axis='y', colors='black', labelsize=8)
