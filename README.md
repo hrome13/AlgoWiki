@@ -4,7 +4,7 @@ In this repository, within the Analysis/ folder, all of my analysis of algorithm
 
 Workflow:
 - Download the Algorithm Wiki data as a csv Analysis/data_dirty.csv
-- Before creating plots, run the function helpers.clean_data(), which creates a new csv Analysis/data_clean.csv
+- Before creating plots, run the function helpers.clean_data(), which creates a new csv Analysis/data.csv
 - While creating plots, the actual numbers are printed in the console
 - If desired, use those numbers to create nicer plots in Excel
 
